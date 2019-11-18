@@ -2,7 +2,7 @@ from constants import Color
 from objects.balls import LinearMovingBall
 from objects.text import Text
 from scenes.base import Scene
-
+from objects.grain import Grain
 
 class MainScene(Scene):
     MAX_COLLISIONS = 15
@@ -10,7 +10,9 @@ class MainScene(Scene):
     def create_objects(self):
         self.text_count = Text(self.game, text='', color=Color.RED, x=400, y=550)
         self.balls = [LinearMovingBall(self.game) for _ in range(5)]
+        self.grain_object = Grain(self.game)
         self.objects = self.balls + [self.text_count]
+        self.objects.append(self.grain_object)
 
     def additional_logic(self):
         self.process_ball_collisions()
