@@ -6,9 +6,10 @@ class Cell(DrawObject):
         super().__init__(game)
 
         self.image = pygame.image.load(filename)
+        self.image = pygame.transform.scale(self.image, (size,size))
         self.rect = self.image.get_rect()
-
         self.state = state
+        self.size = size
         #????
         self.width = size
         self.height = size
@@ -16,4 +17,7 @@ class Cell(DrawObject):
         self.rect.y = y
 
     def process_draw(self):
-        self.game.screen.blit(self.image, self.rect)
+        pygame.draw.rect(self.game.screen, (100, 100, 255), self.rect, 0)
+        # pygame.draw.line(self.game.screen, (100,100,255), (self.rect.x + 0.5*(self.size), self.rect.y),
+        #                                                  (self.rect.x + 0.5*(self.size), self.rect.y+self.size))
+        # self.game.screen.blit(self.image, self.rect)

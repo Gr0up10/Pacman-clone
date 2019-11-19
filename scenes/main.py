@@ -2,7 +2,7 @@ from constants import Color
 from objects.balls import LinearMovingBall
 from objects.text import Text
 from scenes.base import Scene
-
+from objects.base_cell import Cell
 
 class MainScene(Scene):
     MAX_COLLISIONS = 15
@@ -11,7 +11,7 @@ class MainScene(Scene):
         self.text_count = Text(self.game, text='', color=Color.RED, x=400, y=550)
         self.balls = [LinearMovingBall(self.game) for _ in range(5)]
         self.objects = self.balls + [self.text_count]
-
+        self.objects.append(Cell(self.game, x = 100, y =100, state = False, size = 16, filename="./images/tmp.png"))
     def additional_logic(self):
         self.process_ball_collisions()
         self.text_count.update_text(
