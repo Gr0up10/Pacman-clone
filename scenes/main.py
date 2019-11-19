@@ -3,8 +3,7 @@ from objects.balls import LinearMovingBall
 from objects.text import Text
 from scenes.base import Scene
 from objects.field import Field
-from objects.base_cell import UnWalkableCell
-from objects.base_cell import WalcableCell
+
 class MainScene(Scene):
     MAX_COLLISIONS = 15
 
@@ -12,8 +11,7 @@ class MainScene(Scene):
         self.text_count = Text(self.game, text='', color=Color.RED, x=400, y=550)
         self.balls = [LinearMovingBall(self.game) for _ in range(5)]
         self.objects = self.balls + [self.text_count]
-        self.objects.append(Field(self.game, 16, './images/basketball.png'))
-        self.objects.append(UnWalkableCell(self.game, 500, 100, True, 13))
+        self.objects.append(Field(self.game, 32))
 
     def additional_logic(self):
         self.process_ball_collisions()
