@@ -1,6 +1,6 @@
 **/__pycache__
 .idea/
-venv/
+venv*/
 
 # Created by https://www.gitignore.io/api/git,linux,pycharm,windows
 # Edit at https://www.gitignore.io/?templates=git,linux,pycharm,windows
