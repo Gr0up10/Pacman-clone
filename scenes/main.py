@@ -3,7 +3,7 @@ from objects.balls import LinearMovingBall
 from objects.ghost_base import GhostBase
 from objects.text import Text
 from scenes.base import Scene
-
+from objects.grain import Grain
 
 class MainScene(Scene):
     MAX_COLLISIONS = 15
@@ -13,6 +13,7 @@ class MainScene(Scene):
         self.balls = [LinearMovingBall(self.game) for _ in range(5)]
         self.objects = self.balls + [self.text_count]
         self.objects.append(GhostBase(self.game))
+        self.objects.append(Grain(self.game))
 
     def additional_logic(self):
         self.process_ball_collisions()
