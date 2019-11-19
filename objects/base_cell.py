@@ -16,8 +16,14 @@ class Cell(DrawObject):
         self.rect.x = x
         self.rect.y = y
 
-    def process_draw(self):
-        pygame.draw.rect(self.game.screen, (100, 100, 255), self.rect, 0)
         # pygame.draw.line(self.game.screen, (100,100,255), (self.rect.x + 0.5*(self.size), self.rect.y),
         #                                                  (self.rect.x + 0.5*(self.size), self.rect.y+self.size))
         # self.game.screen.blit(self.image, self.rect)
+
+class UnWalkableCell(Cell):
+    def process_draw(self):
+        pygame.draw.rect(self.game.screen, (100, 100, 255), self.rect, 0)
+
+class WalcableCell(Cell):
+    def process_draw(self):
+        pass
