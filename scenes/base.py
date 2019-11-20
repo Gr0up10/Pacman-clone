@@ -1,5 +1,3 @@
-import pygame
-
 from renderers.scene_renderer import SceneRenderer
 
 from pysmile.scene import Scene as PSScene
