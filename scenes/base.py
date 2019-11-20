@@ -1,53 +1,54 @@
-import pygame
+from renderers.scene_renderer import SceneRenderer
 
-from constants import Color
+from pysmile.scene import Scene as PSScene
+from pysmile.components.game.game_event_manager import GameEventManagerComponent
+from pysmile.events.update import UpdateEvent
+from pysmile.events.pygame_event import PyGameEvent
+from pysmile.entity import Entity
+from pysmile.components.pygame_renderer import PyGameRendererComponent
+from pysmile.components.transform import TransformComponent
+from pysmile.math.vector2 import Vector2
 
 
-class Scene:
+class Scene(PSScene):
     def __init__(self, game):
-        self.game = game
-        self.screen = self.game.screen
+        super().__init__(game)
         self.objects = []
         self.create_objects()
+        self.add_entities()
+        self.rederer = SceneRenderer()
+
+        rend_entity = Entity()
+        self.add_entity(rend_entity)
+        rend_entity.add_component(TransformComponent(Vector2(0, 0)))
+        rend_entity.add_component(PyGameRendererComponent(self.rederer, game.screen_size))
+
+    def bind_events(self):
+        ev = self.game.get_component(GameEventManagerComponent)
+        ev.bind(UpdateEvent, self.process_all_logic)
+        ev.bind(PyGameEvent, self.process_current_event)
+
+    def removed(self):
+        ev = self.game.get_component(GameEventManagerComponent)
+        ev.unbind(UpdateEvent, self.process_all_logic)
+        ev.unbind(PyGameEvent, self.process_current_event)
 
     def create_objects(self):
         pass
 
-    def process_frame(self, eventlist):
-        self.process_all_events(eventlist)
-        self.process_all_logic()
-        self.process_all_draw()
+    def add_entities(self):
+        pass
 
-    def process_all_events(self, eventlist):
-        for event in eventlist:
-            self.process_current_event(event)
-
-    def process_current_event(self, event):
+    def process_current_event(self, pg_event):
+        event = pg_event.event
         for item in self.objects:
             item.process_event(event)
-        self.additional_event_check(event)
 
-    def additional_event_check(self, event):
-        pass
+    def process_all_logic(self, _):
+        self.rederer.set_objects(self.objects)
 
-    def process_all_logic(self):
         for item in self.objects:
             item.process_logic()
-        self.additional_logic()
-
-    def additional_logic(self):
-        pass
-
-    def process_all_draw(self):
-        self.screen.fill(Color.BLACK)
-        for item in self.objects:
-            item.process_draw()
-        self.additional_draw()
-        pygame.display.flip()  # double buffering
-        pygame.time.wait(10)  # подождать 10 миллисекунд
-
-    def additional_draw(self):
-        pass
 
     def set_next_scene(self, index):
         self.game.current_scene = index
