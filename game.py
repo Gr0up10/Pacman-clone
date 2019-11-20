@@ -1,7 +1,6 @@
 import pygame
 from pysmile.game import Game as PSGame
 
-from scenes.final import FinalScene
 from scenes.main import MainScene
 from scenes.menu import MenuScene
 from scenes.base import Scene
@@ -11,7 +10,7 @@ from pysmile.component import Component
 
 class Game(PSGame):
     """
-    DEPRECATED
+    DEPRECATED and will be removed soon
     new usage:
     current_scene = SceneClass
 
@@ -24,33 +23,35 @@ class Game(PSGame):
     HIGHSCORE_SCENE_INDEX = 3
 
     def __init__(self, width=800, height=600):
+        pygame.init()
         super().__init__()
 
         self.screen = None
-        pygame.init()
 
         self.setup_default_components((width, height))
-        self.add_component(ExitOnEscape())
-
-        self.scenes = [MenuScene(self), MainScene(self), FinalScene(self)]
 
         self.current_scene = MenuScene
 
+        self.add_component(ExitOnEscape())
+
+        self.scenes = [MenuScene(self), MainScene(self)]
+
     def __setattr__(self, key, value):
         if key == "current_scene":
+            print("set scene")
             if isinstance(self.scene, Scene):
                 self.scene.removed()
 
             if isinstance(value, int):
-                print("current_scene = index is deprecated, use current_scene = SceneClass, " +
-                      "for example current_scene = MenuScene")
+                print("current_scene = "+str(value) +
+                      " is deprecated and will be removed soon, use current_scene = " +
+                      self.scenes[value].__class__.__name__)
                 self.scene = self.scenes[value]
             else:
                 self.scene = value(self)
 
             self.scene.bind_events()
             for comp in self.get_components(Component):
-                print(comp)
                 comp.scene = self.scene
         else:
             object.__setattr__(self, key, value)
