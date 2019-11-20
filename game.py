@@ -4,12 +4,13 @@ import pygame
 from scenes.final import FinalScene
 from scenes.main import MainScene
 from scenes.menu import MenuScene
-
+from scenes.highscore import HighscoreScene
 
 class Game:
     MENU_SCENE_INDEX = 0
     MAIN_SCENE_INDEX = 1
     GAMEOVER_SCENE_INDEX = 2
+    HIGHSCORE_SCENE_INDEX = 3
 
     def __init__(self, width=800, height=600):
         self.width = width
@@ -20,7 +21,7 @@ class Game:
         self.game_over = False
         self.wall_collision_count = 0
         self.ticks = 0
-        self.scenes = [MenuScene(self), MainScene(self), FinalScene(self)]
+        self.scenes = [MenuScene(self), MainScene(self), FinalScene(self), HighscoreScene(self)]
         self.current_scene = 0
 
     def create_window(self):
