@@ -1,7 +1,7 @@
 from constants import Color
 from objects.button import Btn
 from scenes.base import Scene
-import scenes.highscore
+
 
 class MenuScene(Scene):
     def create_objects(self):
