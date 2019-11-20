@@ -4,6 +4,7 @@ from pysmile.game import Game as PSGame
 from scenes.main import MainScene
 from scenes.menu import MenuScene
 from scenes.base import Scene
+from scenes.highscore import HighscoreScene
 from pysmile.components.exit_on_escape import ExitOnEscape
 from pysmile.component import Component
 
@@ -19,26 +20,20 @@ class Game(PSGame):
     """
     MENU_SCENE_INDEX = 0
     MAIN_SCENE_INDEX = 1
-    GAMEOVER_SCENE_INDEX = 2
-    HIGHSCORE_SCENE_INDEX = 3
+    HIGHSCORE_SCENE_INDEX = 2
 
     def __init__(self, width=800, height=600):
         pygame.init()
         super().__init__()
 
         self.screen = None
-
         self.setup_default_components((width, height))
-
         self.current_scene = MenuScene
-
         self.add_component(ExitOnEscape())
-
-        self.scenes = [MenuScene(self), MainScene(self)]
+        self.scenes = [MenuScene(self), MainScene(self), HighscoreScene(self)]
 
     def __setattr__(self, key, value):
         if key == "current_scene":
-            print("set scene")
             if isinstance(self.scene, Scene):
                 self.scene.removed()
 
