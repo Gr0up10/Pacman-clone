@@ -1,4 +1,7 @@
-class DrawObject:
+from pysmile.entity import Entity
+
+
+class DrawObject(Entity):
     def __init__(self, game):
         self.game = game
 
