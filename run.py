@@ -1,5 +1,10 @@
 from game import Game
 
-if __name__ == '__main__':
+
+def main():
     g = Game()
     g.main_loop()
+
+
+if __name__ == '__main__':
+    main()

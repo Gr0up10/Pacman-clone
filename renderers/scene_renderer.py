@@ -12,9 +12,14 @@ class SceneRenderer(PyGameRenderer):
         self.need_redraw = True
 
     def render(self, entity, rect):
+        screen = pygame.Surface(rect.size)
+        screen.set_colorkey((0, 0, 0))
+        screen.fill((0, 0, 0, 0))
         if len(self.objects) > 0:
-            self.objects[0].game.screen = pygame.Surface(rect.size)
+            self.objects[0].game.screen = screen
+
             for obj in self.objects:
                 obj.process_draw()
-            return self.objects[0].game.screen
-        return pygame.Surface(rect.size)
+
+            return screen
+        return screen
