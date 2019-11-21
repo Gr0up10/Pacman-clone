@@ -15,13 +15,14 @@ class Scene(PSScene):
         super().__init__(game)
         self.objects = []
         self.create_objects()
-        self.add_entities()
         self.rederer = SceneRenderer()
 
         rend_entity = Entity()
         self.add_entity(rend_entity)
         rend_entity.add_component(TransformComponent(Vector2(0, 0)))
         rend_entity.add_component(PyGameRendererComponent(self.rederer, game.screen_size))
+
+        self.add_entities()
 
     def bind_events(self):
         ev = self.game.get_component(GameEventManagerComponent)
