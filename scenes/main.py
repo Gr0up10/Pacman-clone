@@ -44,4 +44,4 @@ class MainScene(Scene):
         player.add_component(KeyControlComponent(key_bindings))
         player.add_component(TransformComponent(Vector2(200, 200)))
         player.add_component(BoxCollider((16 * 2, 22 * 2), Vector2(0, 0)))
-        player.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts), (64, 64)))
+        player.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts), (32, 32)))
