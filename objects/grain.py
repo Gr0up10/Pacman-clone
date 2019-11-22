@@ -4,7 +4,7 @@ from objects.base import DrawObject
 
 
 class Grain(DrawObject):
-    filename = 'images/grain.png'
+    filename = 'assets/images/grain.png'
 
     def __init__(self, game, x=400, y=300):
         super().__init__(game)

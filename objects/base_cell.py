@@ -18,7 +18,7 @@ class Cell(DrawObject):
 # Производный класс Стены, отрисовывается
 class Wall(Cell):
     def process_draw(self):
-        pygame.draw.rect(self.game.screen, (100, 100, 255), self.rect, 0)
+        pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 0)
 
 
 # Производный класс Пола, не отрисовывается

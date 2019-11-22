@@ -5,7 +5,7 @@ from objects.base import DrawObject
 
 
 class GhostBase(DrawObject):
-    def_texture = 'images/ghost.png'
+    def_texture = 'assets/images/ghost.png'
     scared_speed_devider = 2
 
     def __init__(self, game, x=100, y=100, base_speed=3, texture=def_texture):
@@ -44,7 +44,7 @@ class GhostBase(DrawObject):
 
 
 class GhostBaseScared(GhostBase):
-    def_texture = 'images/ghost_scared.png'
+    def_texture = 'assets/images/ghost_scared.png'
 
     def __init__(self, game, x=100, y=100, base_speed=1):
         super().__init__(game, x, y, base_speed, GhostBaseScared.def_texture)
