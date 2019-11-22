@@ -7,7 +7,6 @@ from pysmile.components.move import MoveComponent
 from pysmile.components.key_control import KeyControlComponent
 from pysmile.components.collisions.box_collider import BoxCollider
 from pysmile.math.vector2 import Vector2
-from pysmile.renderers.image_renderer import ImageRenderer
 from pysmile.components.pygame_renderer import PyGameRendererComponent
 from pysmile.gl.shader import Shader
 
@@ -16,6 +15,8 @@ from scenes.base import Scene
 from objects.field import Field
 from objects.grain import Grain
 from renderers.object_renderer import ObjectRenderer
+from pysmile.tilemap.tileset import TileSet
+from pysmile.renderers.tile_renderer import TileRenderer
 
 
 class MainScene(Scene):
@@ -36,8 +37,11 @@ class MainScene(Scene):
 
         key_bindings = [[pygame.K_a], [pygame.K_d], [pygame.K_w], [pygame.K_s]]
 
+        ts = TileSet()
+        ts.load("./assets/tilesets/pacman_tiles.png", "./assets/tilesets/pacman.info")
+
         player.add_component(MoveComponent(1, 2))
         player.add_component(KeyControlComponent(key_bindings))
         player.add_component(TransformComponent(Vector2(200, 200)))
         player.add_component(BoxCollider((16 * 2, 22 * 2), Vector2(0, 0)))
-        player.add_component(RendererComponent(ImageRenderer("assets/images/pacman.png"), (100, 100)))
+        player.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts), (64, 64)))
