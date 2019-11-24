@@ -12,12 +12,13 @@ class Btn(DrawObject):
         "hover_font_color": Color.ORANGE
     }
 
-    def __init__(self, game, geometry=(10, 10, 100, 40), color=(255, 255, 0), text='Test', function=None):
+    def __init__(self, game, geometry=(10, 10, 100, 40), color=(255, 255, 0), font_size=20, text='Test', function=None):
         super().__init__(game)
         self.geometry = geometry
         self.color = color
+        self.font_size = font_size
         self.function = function if function else Btn.no_action
-        self.internal_button = Button(self.geometry, self.color, self.function, **Btn.BUTTON_STYLE)
+        self.internal_button = Button(self.geometry, self.color, self.function, self.font_size, **Btn.BUTTON_STYLE)
         self.internal_button.text = text
         self.internal_button.render_text()
 
