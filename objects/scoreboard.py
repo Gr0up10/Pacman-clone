@@ -6,17 +6,30 @@ class scoreboard:
 
     def __init__(self):
         self.data = []
-        with open("objects/data.scr", "r") as data_file:
+
+        try:
+            data_file = open("objects/data.score", "r")
             raw_data = data_file.readlines()
             initials = raw_data[0].split(' ')
-            scores = raw_data[1].split(' ')
+            scores = list(map(int, raw_data[1].split(' ')))
+            print(scores)
 
-            i = 0
-            for initial in initials:
-                self.data.append((initial, int(scores[i])))
-                i += 1
+        except FileNotFoundError:
+            data_file = open("objects/data.score", "w+")
+            initials = ["---"]*10
+            scores = [0]*10
+            print(scores)
+            data_file.write("--- --- --- --- --- --- --- --- --- ---" + '\n' +
+                            "0 0 0 0 0 0 0 0 0 0")
+
+        i = 0
+        for initial in initials:
+            self.data.append((initial, scores[i]))
+            i += 1
 
             self.data.sort(key=sortsecond, reverse=True)
+
+            data_file.close()
 
     def update_data(self, initial, score):
         self.data.append((initial, score))
