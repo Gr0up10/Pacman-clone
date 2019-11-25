@@ -54,6 +54,16 @@ class Field(DrawObject):
     def get_cell_iter(self, col, row):
         return self.map[row][col]
 
+    # Return cell that exists in specified position
+    def get_cell(self, pos):
+        return self.get_cell_iter(int(pos.x//self.size), int(pos.y//self.size))
+
+    # Return cells around some position
+    def get_cells_around(self, pos):
+        pos = (int(pos.x//self.size), int(pos.y//self.size))
+        dirs = [(0, 0), (1, 0), (0, 1), (1, 1), (-1, 0), (0, -1), (-1, -1), (1, -1), (-1, 1)]
+        return [self.get_cell_iter(pos[0] + direct[0], pos[1] + direct[1]) for direct in dirs]
+
     # Функция, возвращающая клетку по координатам
     def get_cell_coord(self, x, y):
         for row in self.map:
