@@ -6,7 +6,7 @@ class scoreboard:
 
     def __init__(self):
         self.data = []
-        with open("data.scr", "r") as data_file:
+        with open("objects/data.scr", "r") as data_file:
             raw_data = data_file.readlines()
             initials = raw_data[0].split(' ')
             scores = raw_data[1].split(' ')
