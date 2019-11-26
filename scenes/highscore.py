@@ -1,7 +1,7 @@
 from constants import Color
 from objects.button import Btn
 from scenes.base import Scene
-from objects.scoreboard import scoreboard
+from objects.scoreboard import ScoreBoard
 from objects.text import Text
 
 
@@ -15,7 +15,7 @@ class HighscoreScene(Scene):
         self.objects = []
         self.objects.append(self.button_menu)
 
-        sc = scoreboard()
+        sc = ScoreBoard()
         self.objects.append(Text(game=self.game, x=self.game.width/4 - 100, y=20, color=Color.ORANGE, text="МЕСТО"))
         self.objects.append(Text(game=self.game, x=self.game.width/4*2-100, y=20, color=Color.ORANGE, text="ИНИЦИАЛЫ"))
         self.objects.append(Text(game=self.game, x=self.game.width/4*3,     y=20, color=Color.ORANGE, text="СЧЕТ"))

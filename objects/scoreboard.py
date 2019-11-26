@@ -1,21 +1,17 @@
-def sortsecond(val):
-    return val[1]
-
-
-class scoreboard:
+class ScoreBoard:
 
     def __init__(self):
         self.data = []
 
         try:
-            data_file = open("objects/data.score", "r")
+            data_file = open("binaries/data.score", "r")
             raw_data = data_file.readlines()
             initials = raw_data[0].split(' ')
             scores = list(map(int, raw_data[1].split(' ')))
             print(scores)
 
         except FileNotFoundError:
-            data_file = open("objects/data.score", "w+")
+            data_file = open("binaries/data.score", "w+")
             initials = ["---"]*10
             scores = [0]*10
             print(scores)
@@ -27,16 +23,16 @@ class scoreboard:
             self.data.append((initial, scores[i]))
             i += 1
 
-            self.data.sort(key=sortsecond, reverse=True)
+            self.data.sort(key=lambda a: a[1], reverse=True)
 
             data_file.close()
 
     def update_data(self, initial, score):
         self.data.append((initial, score))
-        self.data.sort(key=sortsecond, reverse=True)
+        self.data.sort(key=lambda a: a[1], reverse=True)
         self.data.pop(10)
 
-        with open("data.scr", "w") as data_file:
+        with open("binaries/data.score", "w") as data_file:
             raw_initials = ""
             raw_scores = ""
             for instance in self.data:
@@ -54,7 +50,7 @@ class scoreboard:
 
 
 def main():
-    SB = scoreboard()
+    SB = ScoreBoard()
     print(SB.data)
 
     print(SB.get_instance(-2))
