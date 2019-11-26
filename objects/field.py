@@ -2,6 +2,7 @@ import pygame
 from objects.base import DrawObject
 from objects.base_cell import Wall
 from objects.base_cell import Floor
+from objects.base_cell import Meta
 
 
 # Класс Поля, единственный на сцену, хранит Cell(Клетки)
@@ -15,7 +16,6 @@ class Field(DrawObject):
 
         self.game = game
         self.size = size
-        #self.image = pygame.image.load(self.background_path)
 
         # Матрица - текстовое представление игрового поля, карты хранятся в /maps
         self.matrix = []
@@ -37,15 +37,17 @@ class Field(DrawObject):
         # Заполнение map Cell(Клетками) в зависимости от буквы(символа) в матрице
         for row in range(len(self.matrix)):
             for col in range(len(self.matrix[row])):
+                cell_pos = col * self.size, row * self.size
                 # Каждая новая клетка "смещается" от предыдущей на size
                 if self.matrix[row][col] == 'G':
-                    self.map[row].append(Floor(self.game, col * self.size, row * self.size, True, self.size))
+                    self.map[row].append(Floor(self.game, *cell_pos, True, self.size))
+                if self.matrix[row][col] == 'P':
+                    self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=Meta.pacman_spawn))
                 elif self.matrix[row][col] == 'W':
-                    self.map[row].append(Wall(self.game, col * self.size, row * self.size, False, self.size))
+                    self.map[row].append(Wall(self.game, *cell_pos, False, self.size))
 
     # Отрисовка фона и каждой Cell(Клетки)
     def process_draw(self):
-        #self.game.screen.blit(self.image,(0,0))
         for row in range(len(self.map)):
             for col in range(len(self.map[row])):
                 self.map[row][col].process_draw()
@@ -53,6 +55,25 @@ class Field(DrawObject):
     # Функция, возвращающаяя клетку по строке и столбцу
     def get_cell_iter(self, col, row):
         return self.map[row][col]
+
+    # Return cell that exists in specified position
+    def get_cell(self, pos):
+        return self.get_cell_iter(int(pos.x//self.size), int(pos.y//self.size))
+
+    def get_cells_by_type(self, cell_type, meta=None):
+        cells = []
+        for row in range(len(self.matrix)):
+            for col in range(len(self.matrix[row])):
+                cell = self.get_cell_iter(col, row)
+                if isinstance(cell, cell_type) and (meta is None or cell.meta == meta):
+                    cells.append(cell)
+        return cells
+
+    # Return cells around some position
+    def get_cells_around(self, pos):
+        pos = (int(pos.x//self.size), int(pos.y//self.size))
+        dirs = [(0, 0), (1, 0), (0, 1), (1, 1), (-1, 0), (0, -1), (-1, -1), (1, -1), (-1, 1)]
+        return [self.get_cell_iter(pos[0] + direct[0], pos[1] + direct[1]) for direct in dirs]
 
     # Функция, возвращающая клетку по координатам
     def get_cell_coord(self, x, y):

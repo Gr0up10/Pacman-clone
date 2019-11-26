@@ -5,6 +5,8 @@ from pysmile.math.vector2 import Vector2
 from pysmile.components.renderer import RendererComponent
 from pysmile.renderers.tile_renderer import TileRenderer
 
+from components.pacman_collisions import PacmanCollisions
+
 
 class MoveComponent(Component):
     def __init__(self, speed):
@@ -12,16 +14,23 @@ class MoveComponent(Component):
         self.entity = None
         self.speed = speed
         self.direction = Vector2(1, 0)
+        self.new_direction = None
 
     def add_direction(self, x, y):
-        self.direction = Vector2(x, y)
+        self.new_direction = Vector2(x, y)
 
     def update(self, _):
         if self.direction.magnitude() == 0:
             return
 
         trans = self.entity.get_component(TransformComponent)
-        if not trans:
+        collsion = self.entity.get_component(PacmanCollisions)
+        if not trans or not collsion:
+            return
+
+        if self.new_direction and collsion.can_move_in_direction(self.new_direction):
+            self.direction = self.new_direction
+        elif not collsion.can_move_in_direction(self.direction):
             return
 
         rend = self.entity.get_component(RendererComponent)
