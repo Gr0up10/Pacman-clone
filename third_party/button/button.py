@@ -4,7 +4,7 @@ import pygame as pg
 class Button(object):
     """A fairly straight forward button class."""
 
-    def __init__(self, rect, color, function, **kwargs):
+    def __init__(self, rect, color, function, font_size, **kwargs):
         self.rect = pg.Rect(rect)
         self.color = color
         self.function = function
@@ -12,13 +12,14 @@ class Button(object):
         self.hovered = False
         self.hover_text = None
         self.clicked_text = None
+        self.font_size = font_size
         self.process_kwargs(kwargs)
         self.render_text()
 
     def process_kwargs(self, kwargs):
         """Various optional customization you can change by passing kwargs."""
         settings = {"text": None,
-                    "font": pg.font.Font(None, 16),
+                    "font": pg.font.Font("third_party/fonts/Sevenet7Cyr.ttf", int(self.font_size)),
                     "call_on_release": True,
                     "hover_color": None,
                     "clicked_color": None,
