@@ -18,6 +18,7 @@ from scenes.base import Scene
 from objects.field import Field
 from objects.grain import Grain
 from renderers.object_renderer import ObjectRenderer
+from objects.base_cell import Floor, Meta
 
 
 class MainScene(Scene):
@@ -45,9 +46,11 @@ class MainScene(Scene):
         ts = TileSet()
         ts.load("./assets/tilesets/pacman_tiles.png", "./assets/tilesets/pacman.info")
 
+        pacman_pos = self.field_obj.get_cells_by_type(Floor, Meta.pacman_spawn)[0].rect.xy
+
         player.add_component(MoveComponent(2))
         player.add_component(PacmanCollisions(self.field_obj))
         player.add_component(KeyControlComponent(key_bindings, MoveComponent))
-        player.add_component(TransformComponent(Vector2(200, 400)))
+        player.add_component(TransformComponent(Vector2(*pacman_pos)))
         player.add_component(BoxCollider((32, 32)))
         player.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts, animation_speed=0.3), (32, 32)))
