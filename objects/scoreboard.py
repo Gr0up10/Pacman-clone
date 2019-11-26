@@ -1,3 +1,6 @@
+import os
+
+
 class ScoreBoard:
 
     def __init__(self):
@@ -11,6 +14,7 @@ class ScoreBoard:
             print(scores)
 
         except FileNotFoundError:
+            os.mkdir("binaries/")
             data_file = open("binaries/data.score", "w+")
             initials = ["---"]*10
             scores = [0]*10
