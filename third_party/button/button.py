@@ -19,7 +19,7 @@ class Button(object):
     def process_kwargs(self, kwargs):
         """Various optional customization you can change by passing kwargs."""
         settings = {"text": None,
-                    "font": pg.font.Font("third_party/fonts/Sevenet7Cyr.ttf", int(self.font_size)),
+                    "font": pg.font.Font("assets/fonts/Sevenet7Cyr.ttf", int(self.font_size)),
                     "call_on_release": True,
                     "hover_color": None,
                     "clicked_color": None,
