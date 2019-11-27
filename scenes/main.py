@@ -1,5 +1,6 @@
 import pygame
 
+from pysmile.colors import Colors
 from pysmile.entity import Entity
 from pysmile.components.renderer import RendererComponent
 from pysmile.components.transform import TransformComponent
@@ -10,6 +11,7 @@ from pysmile.components.pygame_renderer import PyGameRendererComponent
 from pysmile.gl.shader import Shader
 from pysmile.tilemap.tileset import TileSet
 from pysmile.renderers.tile_renderer import TileRenderer
+from pysmile.renderers.text import TextRenderer
 
 from components.move_component import MoveComponent
 from components.pacman_collisions import PacmanCollisions
@@ -38,13 +40,43 @@ class MainScene(Scene):
         self.objects.append(Grain(self.game))
 
     def add_entities(self):
+        score_label = Entity()
+        self.add_entity(score_label)
+        score_label.add_component(TransformComponent(Vector2(self.game.width-200, 0)))
+        score_label.add_component(PyGameRendererComponent(
+            TextRenderer("score", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
+
+        score = Entity()
+        self.add_entity(score)
+        score.add_component(TransformComponent(Vector2(self.game.width - 200, 20)))
+        score.add_component(PyGameRendererComponent(
+            TextRenderer("000", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
+
+        high_score_label = Entity()
+        self.add_entity(high_score_label)
+        high_score_label.add_component(TransformComponent(Vector2(self.game.width - 200, 50)))
+        high_score_label.add_component(PyGameRendererComponent(
+            TextRenderer("high score", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
+
+        high_score = Entity()
+        self.add_entity(high_score)
+        high_score.add_component(TransformComponent(Vector2(self.game.width - 200, 70)))
+        high_score.add_component(PyGameRendererComponent(
+            TextRenderer("000", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
+
+        ts = TileSet()
+        ts.load("./assets/tilesets/pacman_tiles.png", "./assets/tilesets/pacman.info")
+
+        for i in range(3):
+            pacman_live = Entity()
+            self.add_entity(pacman_live)
+            pacman_live.add_component(TransformComponent(Vector2(self.game.width - 200 + 34*i, self.game.height-100)))
+            pacman_live.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts, animate=False), (32, 32)))
+
         player = Entity()
         self.add_entity(player)
 
         key_bindings = [[pygame.K_a], [pygame.K_d], [pygame.K_w], [pygame.K_s]]
-
-        ts = TileSet()
-        ts.load("./assets/tilesets/pacman_tiles.png", "./assets/tilesets/pacman.info")
 
         pacman_pos = self.field_obj.get_cells_by_type(Floor, Meta.pacman_spawn)[0].rect.xy
 

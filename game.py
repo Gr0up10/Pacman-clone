@@ -22,13 +22,13 @@ class Game(PSGame):
     MAIN_SCENE_INDEX = 1
     HIGHSCORE_SCENE_INDEX = 2
 
-    def __init__(self, width=800, height=680):
+    def __init__(self, width=1024, height=768):
         pygame.init()
         super().__init__()
 
         self.screen = None
         self.setup_default_components((width, height))
-        self.current_scene = HighscoreScene
+        self.current_scene = MainScene
         self.add_component(ExitOnEscape())
         self.scenes = [MenuScene(self), MainScene(self), HighscoreScene(self)]
 

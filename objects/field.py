@@ -28,7 +28,7 @@ class Field(DrawObject):
             lines = file.readlines()
             for row in lines:
                 row = list(row)
-                self.matrix.append(row[:len(row)-1])
+                self.matrix.append(row)
 
         # Создание двумерного массива
         for i in range(len(self.matrix)):
@@ -55,6 +55,7 @@ class Field(DrawObject):
                     self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=[Meta.ghost_turn, Meta.grain_small]))
                 elif self.matrix[row][col] == 'T':
                     self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=[Meta.grain_big, Meta.ghost_turn]))
+
     # Отрисовка фона и каждой Cell(Клетки)
     def process_draw(self):
         for row in range(len(self.map)):
@@ -63,6 +64,9 @@ class Field(DrawObject):
 
     # Функция, возвращающаяя клетку по строке и столбцу
     def get_cell_iter(self, col, row):
+        # If col or row is out range return wall
+        if len(self.map) <= row or len(self.map[0]) <= col:
+            return Wall(self.game, col * self.size, row * self.size, False, self.size)
         return self.map[row][col]
 
     # Return cell that exists in specified position
@@ -74,7 +78,6 @@ class Field(DrawObject):
         for row in range(len(self.matrix)):
             for col in range(len(self.matrix[row])):
                 cell = self.get_cell_iter(col, row)
-
                 if isinstance(cell, cell_type) and (meta is None or (meta in cell.meta)):
                     cells.append(cell)
         return cells
