@@ -22,7 +22,7 @@ class Game(PSGame):
     MAIN_SCENE_INDEX = 1
     HIGHSCORE_SCENE_INDEX = 2
 
-    def __init__(self, width=800, height=600):
+    def __init__(self, width=800, height=680):
         pygame.init()
         super().__init__()
 

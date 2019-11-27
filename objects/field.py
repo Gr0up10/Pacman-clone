@@ -17,14 +17,14 @@ class Field(DrawObject):
         self.game = game
         self.size = size
 
-        # Матрица - текстовое представление игрового поля, карты хранятся в /maps
+        # Матрица - текстовое представление игрового поля, карты хранятся в assets/maps
         self.matrix = []
 
         # Карта поля, в ней хранятся Cell(Клетки)
         self.map = []
 
         # Приведение текстовой карты к двумерному массиву
-        with open('./assets/maps/map1.txt', 'r') as file:
+        with open('./assets/maps/real_map.txt', 'r') as file:
             lines = file.readlines()
             for row in lines:
                 row = list(row)
@@ -45,6 +45,8 @@ class Field(DrawObject):
                     self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=Meta.pacman_spawn))
                 elif self.matrix[row][col] == 'W':
                     self.map[row].append(Wall(self.game, *cell_pos, False, self.size))
+                elif self.matrix[row][col] == 'R':
+                    self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=Meta.ghost_turn))
 
     # Отрисовка фона и каждой Cell(Клетки)
     def process_draw(self):
