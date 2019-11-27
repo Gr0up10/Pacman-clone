@@ -7,6 +7,9 @@ from pysmile.math.rect import Rect
 class Meta(enum.Enum):
     none = 0
     pacman_spawn = 1
+    ghost_turn = 2
+    grain_small = 3
+    grain_big = 4
 
 
 # Класс Базовая клетка, при создании получает: x, y - координаты; state - стена или нет; size - размер клетки
@@ -21,7 +24,8 @@ class Cell(DrawObject):
         self.y = y
         self.state = state
         self.size = size
-        self.meta = meta
+        self.meta = []
+        self.meta.append(meta)
 
 
 # Производный класс Стены, отрисовывается
