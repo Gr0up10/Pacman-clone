@@ -11,14 +11,12 @@ class ScoreBoard:
             raw_data = data_file.readlines()
             initials = raw_data[0].split(' ')
             scores = list(map(int, raw_data[1].split(' ')))
-            print(scores)
 
         except FileNotFoundError:
             os.mkdir("binaries/")
             data_file = open("binaries/data.score", "w+")
             initials = ["---"]*10
             scores = [0]*10
-            print(scores)
             data_file.write("--- --- --- --- --- --- --- --- --- ---" + '\n' +
                             "0 0 0 0 0 0 0 0 0 0")
 
@@ -55,13 +53,9 @@ class ScoreBoard:
 
 def main():
     SB = ScoreBoard()
-    print(SB.data)
-
-    print(SB.get_instance(-2))
 
     SB.update_data("ABC", 100)
     SB.update_data("KEK", 10)
-    print(SB.data)
 
 
 if __name__ == '__main__':
