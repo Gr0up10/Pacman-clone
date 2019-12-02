@@ -18,7 +18,7 @@ from components.pacman_collisions import PacmanCollisions
 from objects.ghost_base import GhostBase
 from scenes.base import Scene
 from objects.field import Field
-from objects.grain import Grain
+from objects.grain import Grain, Big_grain
 from renderers.object_renderer import ObjectRenderer
 from objects.base_cell import Floor, Meta
 
@@ -36,8 +36,17 @@ class MainScene(Scene):
         field.add_component(TransformComponent(Vector2(0, 0)))
         field.add_component(PyGameRendererComponent(ObjectRenderer(self.field_obj), self.game.screen_size, shader))
 
+        level = open("assets/maps/real_map.txt", "r+")
+        level_list = level.readlines()
+        level.close()
+        # Проход по всем данным файла и поиск маленьких (S) и больших (B) зерен
+        for i in range(len(level_list) - 1):
+            for j in range(len(level_list[0]) - 1):
+                if level_list[i][j] == "S" or level_list[i][j] == "C":
+                    self.objects.append(Grain(self.game, j * 32 + 16, i * 32 + 16))  # Отображение маленького зерна на экране
+                elif level_list[i][j] == "B" or level_list[i][j] == "T":
+                    self.objects.append(Big_grain(self.game, j * 32 + 16, i * 32 + 16))  # Отображение большого зерна на экране
         self.objects.append(GhostBase(self.game))
-        self.objects.append(Grain(self.game))
 
     def add_entities(self):
         score_label = Entity()
