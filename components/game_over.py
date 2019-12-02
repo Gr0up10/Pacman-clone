@@ -1,6 +1,6 @@
 from pysmile.component import Component
 from scenes.menu import MenuScene
-from events.collect_grain import CollectSmallGrainEvent
+from events.collect_grain import CollectSmallGrainEvent, CollectBigGrainEvent
 
 
 class GameOverComponent(Component):
@@ -17,7 +17,9 @@ class GameOverComponent(Component):
 
     def removed(self):
         self.entity.event_manager.unbind(CollectSmallGrainEvent, self.collect_grain)
+        self.entity.event_manager.unbind(CollectBigGrainEvent, self.collect_grain)
 
     def applied_on_entity(self, entity):
         self.entity = entity
         entity.event_manager.bind(CollectSmallGrainEvent, self.collect_grain)
+        entity.event_manager.bind(CollectBigGrainEvent, self.collect_grain)

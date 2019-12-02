@@ -2,9 +2,7 @@ import pygame
 from pysmile.game import Game as PSGame
 
 from scenes.main import MainScene
-from scenes.menu import MenuScene
 from scenes.base import Scene
-from scenes.highscore import HighscoreScene
 from pysmile.components.exit_on_escape import ExitOnEscape
 from pysmile.component import Component
 
