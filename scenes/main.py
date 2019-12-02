@@ -40,12 +40,22 @@ class MainScene(Scene):
 
         self.objects.append(GhostBase(self.game))
 
-    def add_entities(self):
+    def add_grain(self, rect, size):
         grain = Entity()
         self.add_entity(grain)
-        grain.add_component(TransformComponent(Vector2(205, 100)))
-        grain.add_component(RendererComponent(ImageRenderer("./assets/images/grain.png"), (5, 5)))
+        grain.add_component(TransformComponent(Vector2(rect.x + rect.w / 2 - size / 2,
+                                                       rect.y + rect.h / 2 - size / 2)))
+        grain.add_component(RendererComponent(ImageRenderer("./assets/images/grain.png"), (size, size)))
         grain.add_component(NameComponent('grain'))
+
+    def add_entities(self):
+        grain_size = 8
+        for g in self.field_obj.get_cells_by_type(Floor, Meta.grain_small):
+            self.add_grain(g.rect, grain_size)
+
+        big_grain_size = 16
+        for g in self.field_obj.get_cells_by_type(Floor, Meta.grain_big):
+            self.add_grain(g.rect, big_grain_size)
 
         score_label = Entity()
         self.add_entity(score_label)
