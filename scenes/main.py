@@ -30,6 +30,7 @@ from objects.scoreboard import ScoreBoard
 class MainScene(Scene):
     def __init__(self, game):
         self.scoreboard = ScoreBoard()
+        self.current_score = CurrentScore(game=game, x=game.width - 200, y=20)
         super().__init__(game)
         self.field_obj = None
 
@@ -42,7 +43,7 @@ class MainScene(Scene):
         field.add_component(PyGameRendererComponent(ObjectRenderer(self.field_obj), self.game.screen_size, shader))
 
         self.objects.append(GhostBase(self.game))
-        self.objects.append(CurrentScore(game=self.game, x=self.game.width - 200, y=20))
+        self.objects.append(self.current_score)
 
     def add_grain(self, rect, size):
         grain = Entity()
@@ -110,4 +111,4 @@ class MainScene(Scene):
         player.add_component(TransformComponent(Vector2(*pacman_pos)))
         player.add_component(BoxCollider((32, 32)))
         player.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts, animation_speed=0.3), (32, 32)))
-        player.add_component(GrainCollisions())
+        player.add_component(GrainCollisions(self.current_score))

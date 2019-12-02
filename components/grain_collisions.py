@@ -2,12 +2,16 @@ from pysmile.component import Component
 from pysmile.components.name import NameComponent
 from pysmile.components.transform import TransformComponent
 from pysmile.events.update import UpdateEvent
+
+from objects.current_score import CurrentScore
+
 import math
 
 
 class GrainCollisions(Component):
-    def __init__(self):
+    def __init__(self, current_score=CurrentScore):
         self.entity = None
+        self.current_score = current_score
 
     def update(self, _):
         # получение позиции пакмана
@@ -26,6 +30,7 @@ class GrainCollisions(Component):
             # проверка расстояния между зерном и пакманом
             if dist <= 13:
                 self.entity.scene.remove_entity(grain)
+                self.current_score.update_score(points=10)
 
     def applied_on_entity(self, entity):
         self.entity = entity
