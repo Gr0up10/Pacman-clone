@@ -16,6 +16,7 @@ from pysmile.renderers.tile_renderer import TileRenderer
 from pysmile.renderers.text import TextRenderer
 
 from components.move_component import MoveComponent
+from components.score_increaser import ScoreIncreaserComponent
 from components.pacman_collisions import PacmanCollisions
 from objects.ghost_base import GhostBase
 from scenes.base import Scene
@@ -68,6 +69,7 @@ class MainScene(Scene):
         score.add_component(TransformComponent(Vector2(self.game.width - 200, 20)))
         score.add_component(PyGameRendererComponent(
             TextRenderer("000", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
+        score.add_component(ScoreIncreaserComponent())
 
         high_score_label = Entity()
         self.add_entity(high_score_label)

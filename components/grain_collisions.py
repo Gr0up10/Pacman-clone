@@ -3,6 +3,7 @@ from pysmile.components.name import NameComponent
 from pysmile.components.transform import TransformComponent
 from pysmile.events.update import UpdateEvent
 import math
+from events.collect_grain import CollectSmallGrainEvent
 
 
 class GrainCollisions(Component):
@@ -25,6 +26,7 @@ class GrainCollisions(Component):
             dist = math.sqrt((trans.x - grain_pos.x) ** 2 + (trans.y - grain_pos.y) ** 2)
             # проверка расстояния между зерном и пакманом
             if dist <= 13:
+                self.entity.event_manager.trigger_event(CollectSmallGrainEvent())
                 self.entity.scene.remove_entity(grain)
 
     def applied_on_entity(self, entity):

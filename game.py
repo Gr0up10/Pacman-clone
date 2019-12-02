@@ -16,9 +16,8 @@ class Game(PSGame):
 
         self.screen = None
         self.setup_default_components((width, height))
-        self.current_scene = MenuScene
+        self.current_scene = MainScene
         self.add_component(ExitOnEscape())
-        self.scenes = [MenuScene(self), MainScene(self), HighscoreScene(self)]
 
     def __setattr__(self, key, value):
         if key == "current_scene":
