@@ -23,10 +23,13 @@ from objects.field import Field
 from renderers.object_renderer import ObjectRenderer
 from objects.base_cell import Floor, Meta
 from components.grain_collisions import GrainCollisions
+from objects.current_score import CurrentScore
+from objects.scoreboard import ScoreBoard
 
 
 class MainScene(Scene):
     def __init__(self, game):
+        self.scoreboard = ScoreBoard()
         super().__init__(game)
         self.field_obj = None
 
@@ -39,6 +42,7 @@ class MainScene(Scene):
         field.add_component(PyGameRendererComponent(ObjectRenderer(self.field_obj), self.game.screen_size, shader))
 
         self.objects.append(GhostBase(self.game))
+        self.objects.append(CurrentScore(game=self.game, x=self.game.width - 200, y=20))
 
     def add_grain(self, rect, size):
         grain = Entity()
@@ -62,24 +66,26 @@ class MainScene(Scene):
         score_label.add_component(TransformComponent(Vector2(self.game.width - 200, 0)))
         score_label.add_component(PyGameRendererComponent(
             TextRenderer("score", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
-
+        '''
         score = Entity()
         self.add_entity(score)
         score.add_component(TransformComponent(Vector2(self.game.width - 200, 20)))
         score.add_component(PyGameRendererComponent(
             TextRenderer("000", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
-
+        '''
         high_score_label = Entity()
         self.add_entity(high_score_label)
         high_score_label.add_component(TransformComponent(Vector2(self.game.width - 200, 50)))
         high_score_label.add_component(PyGameRendererComponent(
             TextRenderer("high score", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
 
+        high_score_num = self.scoreboard.get_instance(0)[1]
+        print(high_score_num)
         high_score = Entity()
         self.add_entity(high_score)
         high_score.add_component(TransformComponent(Vector2(self.game.width - 200, 70)))
         high_score.add_component(PyGameRendererComponent(
-            TextRenderer("000", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
+            TextRenderer(str(high_score_num), font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
 
         ts = TileSet()
         ts.load("./assets/tilesets/pacman_tiles.png", "./assets/tilesets/pacman.info")
