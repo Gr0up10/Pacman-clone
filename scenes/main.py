@@ -45,7 +45,7 @@ class MainScene(Scene):
         self.add_entity(grain)
         grain.add_component(TransformComponent(Vector2(rect.x + rect.w / 2 - size / 2,
                                                        rect.y + rect.h / 2 - size / 2)))
-        grain.add_component(RendererComponent(ImageRenderer("./assets/images/grain.png"), (size, size)))
+        grain.add_component(RendererComponent(ImageRenderer("./assets/images/small_grain.png"), (size, size)))
         grain.add_component(NameComponent('grain'))
 
     def add_entities(self):
