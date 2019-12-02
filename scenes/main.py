@@ -1,6 +1,7 @@
 import pygame
 
 from pysmile.colors import Colors
+from pysmile.components.name import NameComponent
 from pysmile.entity import Entity
 from pysmile.components.renderer import RendererComponent
 from pysmile.components.transform import TransformComponent
@@ -9,6 +10,7 @@ from pysmile.components.collisions.box_collider import BoxCollider
 from pysmile.math.vector2 import Vector2
 from pysmile.components.pygame_renderer import PyGameRendererComponent
 from pysmile.gl.shader import Shader
+from pysmile.renderers.image_renderer import ImageRenderer
 from pysmile.tilemap.tileset import TileSet
 from pysmile.renderers.tile_renderer import TileRenderer
 from pysmile.renderers.text import TextRenderer
@@ -18,9 +20,9 @@ from components.pacman_collisions import PacmanCollisions
 from objects.ghost_base import GhostBase
 from scenes.base import Scene
 from objects.field import Field
-from objects.grain import Grain, Big_grain
 from renderers.object_renderer import ObjectRenderer
 from objects.base_cell import Floor, Meta
+from components.grain_collisions import GrainCollisions
 
 
 class MainScene(Scene):
@@ -36,22 +38,28 @@ class MainScene(Scene):
         field.add_component(TransformComponent(Vector2(0, 0)))
         field.add_component(PyGameRendererComponent(ObjectRenderer(self.field_obj), self.game.screen_size, shader))
 
-        level = open("assets/maps/real_map.txt", "r+")
-        level_list = level.readlines()
-        level.close()
-        # Проход по всем данным файла и поиск маленьких (S) и больших (B) зерен
-        for i in range(len(level_list) - 1):
-            for j in range(len(level_list[0]) - 1):
-                if level_list[i][j] == "S" or level_list[i][j] == "C":
-                    self.objects.append(Grain(self.game, j * 32 + 16, i * 32 + 16))  # Отображение маленького зерна на экране
-                elif level_list[i][j] == "B" or level_list[i][j] == "T":
-                    self.objects.append(Big_grain(self.game, j * 32 + 16, i * 32 + 16))  # Отображение большого зерна на экране
         self.objects.append(GhostBase(self.game))
 
+    def add_grain(self, rect, size):
+        grain = Entity()
+        self.add_entity(grain)
+        grain.add_component(TransformComponent(Vector2(rect.x + rect.w / 2 - size / 2,
+                                                       rect.y + rect.h / 2 - size / 2)))
+        grain.add_component(RendererComponent(ImageRenderer("./assets/images/grain.png"), (size, size)))
+        grain.add_component(NameComponent('grain'))
+
     def add_entities(self):
+        grain_size = 8
+        for g in self.field_obj.get_cells_by_type(Floor, Meta.grain_small):
+            self.add_grain(g.rect, grain_size)
+
+        big_grain_size = 16
+        for g in self.field_obj.get_cells_by_type(Floor, Meta.grain_big):
+            self.add_grain(g.rect, big_grain_size)
+
         score_label = Entity()
         self.add_entity(score_label)
-        score_label.add_component(TransformComponent(Vector2(self.game.width-200, 0)))
+        score_label.add_component(TransformComponent(Vector2(self.game.width - 200, 0)))
         score_label.add_component(PyGameRendererComponent(
             TextRenderer("score", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
 
@@ -79,7 +87,8 @@ class MainScene(Scene):
         for i in range(3):
             pacman_live = Entity()
             self.add_entity(pacman_live)
-            pacman_live.add_component(TransformComponent(Vector2(self.game.width - 200 + 34*i, self.game.height-100)))
+            pacman_live.add_component(
+                TransformComponent(Vector2(self.game.width - 200 + 34 * i, self.game.height - 100)))
             pacman_live.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts, animate=False), (32, 32)))
 
         player = Entity()
@@ -95,3 +104,4 @@ class MainScene(Scene):
         player.add_component(TransformComponent(Vector2(*pacman_pos)))
         player.add_component(BoxCollider((32, 32)))
         player.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts, animation_speed=0.3), (32, 32)))
+        player.add_component(GrainCollisions())

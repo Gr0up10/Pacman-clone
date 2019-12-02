@@ -10,25 +10,13 @@ from pysmile.component import Component
 
 
 class Game(PSGame):
-    """
-    DEPRECATED and will be removed soon
-    new usage:
-    current_scene = SceneClass
-
-    example:
-    current_scene = MainScene
-    """
-    MENU_SCENE_INDEX = 0
-    MAIN_SCENE_INDEX = 1
-    HIGHSCORE_SCENE_INDEX = 2
-
     def __init__(self, width=1024, height=768):
         pygame.init()
         super().__init__()
 
         self.screen = None
         self.setup_default_components((width, height))
-        self.current_scene = MainScene
+        self.current_scene = MenuScene
         self.add_component(ExitOnEscape())
         self.scenes = [MenuScene(self), MainScene(self), HighscoreScene(self)]
 
@@ -37,11 +25,8 @@ class Game(PSGame):
             if isinstance(self.scene, Scene):
                 self.scene.removed()
 
-            if isinstance(value, int):
-                print("current_scene = "+str(value) +
-                      " is deprecated and will be removed soon, use current_scene = " +
-                      self.scenes[value].__class__.__name__)
-                self.scene = self.scenes[value]
+            if isinstance(value, Scene):
+                self.scene = value
             else:
                 self.scene = value(self)
 
