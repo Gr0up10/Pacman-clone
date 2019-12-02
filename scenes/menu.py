@@ -1,6 +1,8 @@
 from constants import Color
 from objects.button import Btn
 from scenes.base import Scene
+from scenes.main import MainScene
+from scenes.highscore import HighscoreScene
 
 
 class MenuScene(Scene):
@@ -11,10 +13,10 @@ class MenuScene(Scene):
         self.objects = [self.button_start, self.button_exit, self.button_highscore]
 
     def set_main_scene(self):
-        self.set_next_scene(self.game.MAIN_SCENE_INDEX)
+        self.set_next_scene(MainScene)
 
     def exit(self):
-        self.game.game_over = True
+        self.game.exit()
 
     def highscore(self):
-        self.set_next_scene(self.game.HIGHSCORE_SCENE_INDEX)
+        self.set_next_scene(HighscoreScene)
