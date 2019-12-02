@@ -16,7 +16,7 @@ class MenuScene(Scene):
         self.set_next_scene(MainScene)
 
     def exit(self):
-        self.game.game_over = True
+        self.game.exit()
 
     def highscore(self):
         self.set_next_scene(HighscoreScene)
