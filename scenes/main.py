@@ -24,10 +24,14 @@ from objects.field import Field
 from renderers.object_renderer import ObjectRenderer
 from objects.base_cell import Floor, Meta
 from components.grain_collisions import GrainCollisions
+from components.game_over import GameOverComponent
 
 
 class MainScene(Scene):
     def __init__(self, game):
+        self.game_over = GameOverComponent()
+        game.add_component(self.game_over)
+
         super().__init__(game)
         self.field_obj = None
 
@@ -49,6 +53,10 @@ class MainScene(Scene):
         grain.add_component(RendererComponent(ImageRenderer("./assets/images/small_grain.png"), (size, size)))
         grain.add_component(NameComponent('grain'))
 
+    def removed(self):
+        super().removed()
+        self.game.remove_component(GameOverComponent)
+
     def add_entities(self):
         grain_size = 8
         for g in self.field_obj.get_cells_by_type(Floor, Meta.grain_small):
@@ -56,6 +64,7 @@ class MainScene(Scene):
 
         big_grain_size = 16
         for g in self.field_obj.get_cells_by_type(Floor, Meta.grain_big):
+            self.game_over.max_grains_count += 1
             self.add_grain(g.rect, big_grain_size)
 
         score_label = Entity()

@@ -12,7 +12,9 @@ class ScoreIncreaserComponent(Component):
         score = self.entity.get_component(PyGameRendererComponent)
         score.renderer.text = "{:03d}".format(int(score.renderer.text) + 1)
 
+    def removed(self):
+        self.entity.event_manager.bind(CollectSmallGrainEvent, self.collect_small_grain)
+
     def applied_on_entity(self, entity):
-        print("bind")
         self.entity = entity
         entity.event_manager.bind(CollectSmallGrainEvent, self.collect_small_grain)

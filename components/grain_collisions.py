@@ -29,6 +29,9 @@ class GrainCollisions(Component):
                 self.entity.event_manager.trigger_event(CollectSmallGrainEvent())
                 self.entity.scene.remove_entity(grain)
 
+    def removed(self):
+        self.entity.event_manager.unbind(UpdateEvent, self.update)
+
     def applied_on_entity(self, entity):
         self.entity = entity
         entity.event_manager.bind(UpdateEvent, self.update)
