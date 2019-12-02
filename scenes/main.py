@@ -16,6 +16,7 @@ from pysmile.renderers.tile_renderer import TileRenderer
 from pysmile.renderers.text import TextRenderer
 
 from components.move_component import MoveComponent
+from components.score_increaser import ScoreIncreaserComponent
 from components.pacman_collisions import PacmanCollisions
 from objects.ghost_base import GhostBase
 from scenes.base import Scene
@@ -23,10 +24,14 @@ from objects.field import Field
 from renderers.object_renderer import ObjectRenderer
 from objects.base_cell import Floor, Meta
 from components.grain_collisions import GrainCollisions
+from components.game_over import GameOverComponent
 
 
 class MainScene(Scene):
     def __init__(self, game):
+        self.game_over = GameOverComponent()
+        game.add_component(self.game_over)
+
         super().__init__(game)
         self.field_obj = None
 
@@ -40,22 +45,28 @@ class MainScene(Scene):
 
         self.objects.append(GhostBase(self.game))
 
-    def add_grain(self, rect, size):
+    def add_grain(self, rect, size, big=False):
         grain = Entity()
         self.add_entity(grain)
         grain.add_component(TransformComponent(Vector2(rect.x + rect.w / 2 - size / 2,
                                                        rect.y + rect.h / 2 - size / 2)))
         grain.add_component(RendererComponent(ImageRenderer("./assets/images/small_grain.png"), (size, size)))
-        grain.add_component(NameComponent('grain'))
+        grain.add_component(NameComponent('grain' + ('big' if big else '')))
+
+    def removed(self):
+        super().removed()
+        self.game.remove_component(GameOverComponent)
 
     def add_entities(self):
         grain_size = 8
         for g in self.field_obj.get_cells_by_type(Floor, Meta.grain_small):
+            self.game_over.max_grains_count += 1
             self.add_grain(g.rect, grain_size)
 
         big_grain_size = 16
         for g in self.field_obj.get_cells_by_type(Floor, Meta.grain_big):
-            self.add_grain(g.rect, big_grain_size)
+            self.game_over.max_grains_count += 1
+            self.add_grain(g.rect, big_grain_size, True)
 
         score_label = Entity()
         self.add_entity(score_label)
@@ -68,6 +79,7 @@ class MainScene(Scene):
         score.add_component(TransformComponent(Vector2(self.game.width - 200, 20)))
         score.add_component(PyGameRendererComponent(
             TextRenderer("000", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
+        score.add_component(ScoreIncreaserComponent())
 
         high_score_label = Entity()
         self.add_entity(high_score_label)

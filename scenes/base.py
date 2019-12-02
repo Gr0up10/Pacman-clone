@@ -8,6 +8,7 @@ from pysmile.entity import Entity
 from pysmile.components.pygame_renderer import PyGameRendererComponent
 from pysmile.components.transform import TransformComponent
 from pysmile.math.vector2 import Vector2
+from pysmile.component import Component
 
 
 class Scene(PSScene):
@@ -30,6 +31,9 @@ class Scene(PSScene):
         ev.bind(PyGameEvent, self.process_current_event)
 
     def removed(self):
+        for ent in self.entities:
+            [c.removed() for c in ent.get_components(Component)]
+
         ev = self.game.get_component(GameEventManagerComponent)
         ev.unbind(UpdateEvent, self.process_all_logic)
         ev.unbind(PyGameEvent, self.process_current_event)
@@ -51,5 +55,5 @@ class Scene(PSScene):
         for item in self.objects:
             item.process_logic()
 
-    def set_next_scene(self, index):
-        self.game.current_scene = index
+    def set_next_scene(self, scene):
+        self.game.current_scene = scene

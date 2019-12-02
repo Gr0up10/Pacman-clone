@@ -43,6 +43,9 @@ class MoveComponent(Component):
 
         trans.position += self.direction * self.speed
 
+    def removed(self):
+        self.entity.event_manager.bind(UpdateEvent, self.update)
+
     def applied_on_entity(self, entity):
         self.entity = entity
         entity.event_manager.bind(UpdateEvent, self.update)
