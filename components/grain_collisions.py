@@ -2,6 +2,7 @@ from pysmile.component import Component
 from pysmile.components.name import NameComponent
 from pysmile.components.transform import TransformComponent
 from pysmile.events.update import UpdateEvent
+from pysmile.math.vector2 import Vector2
 import math
 from events.collect_grain import CollectSmallGrainEvent, CollectBigGrainEvent
 
@@ -23,9 +24,10 @@ class GrainCollisions(Component):
             # получение позиции зерна
             grain_pos = grain.get_component(TransformComponent)
             # вычисление дистанции между зерном и пакманом
+            #pos = trans.pos + Vector2()
             dist = math.sqrt((trans.x - grain_pos.x) ** 2 + (trans.y - grain_pos.y) ** 2)
             # проверка расстояния между зерном и пакманом
-            if dist <= 13:
+            if dist <= 16:
                 if 'big' in grain.get_component(NameComponent).name:
                     self.entity.event_manager.trigger_event(CollectBigGrainEvent())
                 else:
