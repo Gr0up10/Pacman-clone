@@ -31,7 +31,7 @@ class GhostMove(GhostBase):
 
         c = self.field.get_cell(Vector2( self.rect.centerx , self.rect.centery ))
         print(c)
-        if len(c.meta) > 0 and Meta.ghost_turn in c.meta[0]:
+        if c.meta is not None and Meta.ghost_turn in c.meta:
             self.wasd = randint(0, 3)
             print("go")
             if self.wasd == self.stepback or isinstance(self.checker(), Wall):
