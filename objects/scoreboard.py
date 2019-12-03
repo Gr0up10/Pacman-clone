@@ -2,6 +2,7 @@ import os
 
 
 class ScoreBoard:
+    current_score = 0
 
     def __init__(self):
         self.data = []
@@ -15,8 +16,8 @@ class ScoreBoard:
         except FileNotFoundError:
             os.mkdir("binaries/")
             data_file = open("binaries/data.score", "w+")
-            initials = ["---"]*10
-            scores = [0]*10
+            initials = ["---"] * 10
+            scores = [0] * 10
             data_file.write("--- --- --- --- --- --- --- --- --- ---" + '\n' +
                             "0 0 0 0 0 0 0 0 0 0")
 
@@ -25,9 +26,9 @@ class ScoreBoard:
             self.data.append((initial, scores[i]))
             i += 1
 
-            self.data.sort(key=lambda a: a[1], reverse=True)
+        self.data.sort(key=lambda a: a[1], reverse=True)
 
-            data_file.close()
+        data_file.close()
 
     def update_data(self, initial, score):
         self.data.append((initial, score))
