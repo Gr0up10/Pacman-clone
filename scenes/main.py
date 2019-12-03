@@ -19,6 +19,9 @@ from components.move_component import MoveComponent
 from components.score_increaser import ScoreIncreaserComponent
 from components.pacman_collisions import PacmanCollisions
 from objects.ghost_base import GhostBase
+
+from objects.ghost_move import  GhostMove
+
 from scenes.base import Scene
 from objects.field import Field
 from renderers.object_renderer import ObjectRenderer
@@ -45,7 +48,7 @@ class MainScene(Scene):
         field.add_component(TransformComponent(Vector2(0, 0)))
         field.add_component(PyGameRendererComponent(ObjectRenderer(self.field_obj), self.game.screen_size, shader))
 
-        self.objects.append(GhostBase(self.game))
+        self.objects.append(GhostMove(self.game,self.field_obj))
 
     def add_grain(self, rect, size, big=False):
         grain = Entity()

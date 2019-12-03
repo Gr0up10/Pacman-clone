@@ -8,15 +8,16 @@ class GhostBase(DrawObject):
     def_texture = 'assets/images/ghosts/red.png'
     scared_speed_devider = 2
 
-    def __init__(self, game, x=100, y=100, base_speed=3, texture=def_texture):
+    def __init__(self, game, x=32, y=32, base_speed=3, texture=def_texture):
         super().__init__(game)
 
         self.image = pygame.image.load(texture)
         self.rect = self.image.get_rect()
-        self.rect.centerx = x
-        self.rect.centery = y
-        self.x = x
-        self.y = y
+
+        self.x = 48
+        self.y = 48
+        self.rect.centerx = self.x
+        self.rect.centery = self.y
 
         self.window_width = self.game.width
         self.window_height = self.game.height
@@ -29,19 +30,6 @@ class GhostBase(DrawObject):
 
     def collides_with(self, obj):
         return pygame.sprite.collide_mask(self, obj)
-
-    # Дефолтное поведение - рандомные направления
-    def process_logic(self):
-        self.shift_x = 1 if randint(0, 1) == 1 else -1
-        self.shift_y = 1 if randint(0, 1) == 1 else -1
-
-        self.rect.x += self.shift_x
-        self.rect.y += self.shift_y
-        if self.rect.left <= 0 or self.rect.right >= self.window_width:
-            self.shift_x *= -1
-        if self.rect.top <= 0 or self.rect.bottom >= self.window_height:
-            self.shift_y *= -1
-
 
 class GhostBaseScared(GhostBase):
     def_texture = 'assets/images/ghosts/afraid_0.png'
