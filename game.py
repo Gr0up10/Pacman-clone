@@ -9,7 +9,8 @@ from pysmile.component import Component
 
 class Game(PSGame):
     def __init__(self, width=1024, height=768):
-        pygame.init()
+        pygame.display.init()
+        pygame.font.init()
         super().__init__()
 
         self.screen = None
