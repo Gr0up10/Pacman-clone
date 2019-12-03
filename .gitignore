@@ -1,6 +1,7 @@
 **/__pycache__
 .idea/
 venv*/
+./src
 binaries/data.score
 third_party/button/PixelFJVerdana12pt.ttf
 

@@ -25,6 +25,7 @@ from renderers.object_renderer import ObjectRenderer
 from objects.base_cell import Floor, Meta
 from components.grain_collisions import GrainCollisions
 from components.game_over import GameOverComponent
+from objects.scoreboard import ScoreBoard
 
 
 class MainScene(Scene):
@@ -32,6 +33,7 @@ class MainScene(Scene):
         self.game_over = GameOverComponent()
         game.add_component(self.game_over)
 
+        self.scoreboard = ScoreBoard()
         super().__init__(game)
         self.field_obj = None
 
@@ -87,11 +89,13 @@ class MainScene(Scene):
         high_score_label.add_component(PyGameRendererComponent(
             TextRenderer("high score", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
 
+        high_score_num = self.scoreboard.get_instance(0)[1]
+        print(high_score_num)
         high_score = Entity()
         self.add_entity(high_score)
         high_score.add_component(TransformComponent(Vector2(self.game.width - 200, 70)))
         high_score.add_component(PyGameRendererComponent(
-            TextRenderer("000", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
+            TextRenderer(str(high_score_num), font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
 
         ts = TileSet()
         ts.load("./assets/tilesets/pacman_tiles.png", "./assets/tilesets/pacman.info")
