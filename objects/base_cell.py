@@ -25,7 +25,10 @@ class Cell(DrawObject):
         self.state = state
         self.size = size
         self.meta = []
-        self.meta.append(meta)
+        if isinstance(meta, list):
+            self.meta = meta
+        else:
+            self.meta.append(meta)
 
 
 # Производный класс Стены, отрисовывается
