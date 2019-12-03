@@ -13,29 +13,34 @@ class GhostMove(GhostBase):
         self.stepback = 2
         self.wasd = 2
         self.speed = 2
+        self.time_lock=60
 
-    def checker(self):
+    def checker(self,r):
         if self.wasd == 0:
-            return self.field.get_cell(Vector2(self.rect.centerx - 32, self.rect.centery))
+            return self.field.get_cell(Vector2(self.rect.centerx - r, self.rect.centery))
 
         elif self.wasd == 2:
-            return self.field.get_cell(Vector2(self.rect.centerx + 32, self.rect.centery))
+            return self.field.get_cell(Vector2(self.rect.centerx + r, self.rect.centery))
 
         elif self.wasd == 1:
-            return self.field.get_cell(Vector2(self.rect.centerx, self.rect.centery - 32))
+            return self.field.get_cell(Vector2(self.rect.centerx, self.rect.centery - r))
 
         elif self.wasd == 3:
-            return self.field.get_cell(Vector2(self.rect.centerx, self.rect.centery + 32))
+            return self.field.get_cell(Vector2(self.rect.centerx, self.rect.centery + r))
 
     def check(self):
 
-        c = self.field.get_cell(Vector2( self.rect.centerx , self.rect.centery ))
-        print(c)
-        if c.meta is not None and Meta.ghost_turn in c.meta:
+        c = self.checker(-16)
+        if (c.meta is not None and Meta.ghost_turn in c.meta )and self.time_lock>=20:
             self.wasd = randint(0, 3)
-            print("go")
-            if self.wasd == self.stepback or isinstance(self.checker(), Wall):
+            if (self.wasd == self.stepback or isinstance(self.checker(32), Wall))and self.time_lock>=20:
                 self.check()
+            else:
+                self.time_lock=0
+                if self.wasd==3 or self.wasd==2 :
+                    self.stepback=abs(self.wasd - 2)
+                else:
+                    self.stepback=self.wasd+2
 
     def go(self):
         if self.wasd == 0:
@@ -49,6 +54,8 @@ class GhostMove(GhostBase):
 
         elif self.wasd == 3:
             self.rect.centery += self.speed
+
+        self.time_lock+=1
 
     def process_logic(self):
         self.check()
