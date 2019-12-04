@@ -11,6 +11,9 @@ class Meta(enum.Enum):
     grain_small = 3
     grain_big = 4
 
+    teleport1 =5
+    teleport2 =6
+
 
 # Класс Базовая клетка, при создании получает: x, y - координаты; state - стена или нет; size - размер клетки
 class Cell(DrawObject):
