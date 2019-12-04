@@ -56,6 +56,13 @@ class Field(DrawObject):
                 elif self.matrix[row][col] == 'T':
                     self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=[Meta.grain_big, Meta.ghost_turn]))
 
+                elif self.matrix[row][col] == 't':
+                    self.map[row].append(
+                        Floor(self.game, *cell_pos, True, self.size, meta=[Meta.teleport2]))
+                elif self.matrix[row][col] == 'p':
+                    self.map[row].append(
+                        Floor(self.game, *cell_pos, True, self.size, meta=[Meta.teleport1]))
+
     # Отрисовка фона и каждой Cell(Клетки)
     def process_draw(self):
         for row in range(len(self.map)):
