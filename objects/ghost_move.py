@@ -12,7 +12,7 @@ class GhostMove(GhostBase):
         self.field = field
         self.stepback = 2
         self.wasd = 2
-        self.speed = 2
+        self.speed = 3
         self.time_lock=60
 
     def checker(self,r):
@@ -29,18 +29,20 @@ class GhostMove(GhostBase):
             return self.field.get_cell(Vector2(self.rect.centerx, self.rect.centery + r))
 
     def check(self):
-
+        v=False
         c = self.checker(-16)
-        if (c.meta is not None and Meta.ghost_turn in c.meta )and self.time_lock>=20:
+        if (c.meta is not None and Meta.ghost_turn in c.meta )and self.time_lock>=40/self.speed:
             self.wasd = randint(0, 3)
-            if (self.wasd == self.stepback or isinstance(self.checker(32), Wall))and self.time_lock>=20:
-                self.check()
-            else:
-                self.time_lock=0
-                if self.wasd==3 or self.wasd==2 :
-                    self.stepback=abs(self.wasd - 2)
+            while v==False :
+                if (self.wasd == self.stepback or isinstance(self.checker(32), Wall))and self.time_lock>=20/self.speed:
+                    self.wasd = randint(0, 3)
                 else:
-                    self.stepback=self.wasd+2
+                    v=True
+                    self.time_lock=0
+                    if self.wasd==3 or self.wasd==2 :
+                        self.stepback=abs(self.wasd - 2)
+                    else:
+                        self.stepback=self.wasd+2
 
     def go(self):
         if self.wasd == 0:
