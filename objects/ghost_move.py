@@ -6,14 +6,20 @@ from pysmile.math.vector2 import Vector2
 
 class GhostMove(GhostBase):
     def_texture = 'assets/images/ghosts/red.png'
-
-    def __init__(self, game, field, x=32, y=32, base_speed=3, texture=def_texture):
+    speed = 3
+    def __init__(self, game, field,speed=3, x=32, y=32, texture=def_texture):
         super().__init__(game, field)
         self.field = field
-        self.stepback = 2
-        self.wasd = 2
-        self.speed = 3
-        self.time_lock=60
+        self.stepback = 2 # направление обратное васду (для того чтобы гост не пошел назад)
+        self.wasd = 0 # напровлеие движа
+        '''
+        0-лево
+        1-вверх
+        2-право
+        3-вниз
+        '''
+        self.speed = speed# cкорость можно изменять
+        self.time_lock=60# время которое должно пройти после поворота для предотвращения повторного вызова функции
 
     def checker(self,r):
         if self.wasd == 0:
@@ -30,7 +36,7 @@ class GhostMove(GhostBase):
 
     def check(self):
         v=False
-        c = self.checker(-16)
+        c = self.checker(-16)#значение меты
         if (c.meta is not None and Meta.ghost_turn in c.meta )and self.time_lock>=40/self.speed:
             self.wasd = randint(0, 3)
             while v==False :
@@ -43,6 +49,8 @@ class GhostMove(GhostBase):
                         self.stepback=abs(self.wasd - 2)
                     else:
                         self.stepback=self.wasd+2
+        else:
+            self.teleport()
 
     def go(self):
         if self.wasd == 0:
@@ -58,6 +66,16 @@ class GhostMove(GhostBase):
             self.rect.centery += self.speed
 
         self.time_lock+=1
+
+    def teleport(self):
+        c = self.checker(-16)#значение меты
+        if c.meta is not None and Meta.teleport2 in c.meta :
+            self.rect.centery=11*32-16
+            self.rect.centerx=64
+        elif c.meta is not None and Meta.teleport1 in c.meta:
+            self.rect.centery=11*32-16
+            self.rect.centerx=32*23
+
 
     def process_logic(self):
         self.check()
