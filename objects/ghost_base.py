@@ -14,10 +14,10 @@ class GhostBase(DrawObject):
         self.image = pygame.image.load(texture)
         self.rect = self.image.get_rect()
 
-        self.x = 48
-        self.y = 48
-        self.rect.centery=48
-        self.rect.centerx=48
+        self.x = x
+        self.y = y
+        self.rect.centery=x
+        self.rect.centerx=y
 
         self.window_width = self.game.width
         self.window_height = self.game.height

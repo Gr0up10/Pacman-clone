@@ -10,7 +10,7 @@ class GhostMove(GhostBase):
     checker_offset = -16
     check_offset = 32
 
-    def __init__(self, game, field, time_lock=60, time_lock_limit=20, speed=3, x=32, y=32, texture=def_texture):
+    def __init__(self, game, field, time_lock=60, time_lock_limit=20, speed=3, x=48, y=48, texture=def_texture):
         super().__init__(game, x, y, texture)
         self.field = field
         self.stepback = 2  # направление обратное васду (для того чтобы гост не пошел назад)
