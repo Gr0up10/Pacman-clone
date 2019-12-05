@@ -1,9 +1,6 @@
-"""
-    - В качестве "имен" точек в графе используются их координаты от левого верхнего угла карты (как в pygame)
-    - Граф генерируется автоматически основываясь на карте, создавая точки из клеток, помеченных как C, R и T
-    - Точки хранятся в виде списка, т.е. у каждой точки есть массив ее соседей с элементами вида
-        (*координата X соседа*, *координата Y соседа*, *число шагов до соседа*)
-"""
+import pygame
+from objects.base_cell import Cell, Meta
+from objects.field import Field
 
 
 class Vert:
@@ -12,67 +9,52 @@ class Vert:
         self.y = y
         self.neighbours = []
 
-    def get_all_neighbours(self):
-        return self.neighbours
-
-    def get_distance_to(self, x, y):
+    def get_neighbour(self, x, y):
         for i in self.neighbours:
-            if i[0] == x and i[1] == y:
-                return i[2]
+            if i[0].x == x and i[1].y == y:
+                return i
         return None
 
 
-def check_for_horizontal_neighbours(map_raw, x, y, width, direction):
+def check_for_horizontal_neighbours(map_obj, x, y, width, direction):
     dist = 0
     for xx in range(x + direction, width if direction > 0 else 0, direction):
         dist += 1
-        if map_raw[y][xx] == "W":
+        if not map_obj[y][xx].state:
             return None
-        if map_raw[y][xx] == "C" or map_raw[y][xx] == "T" or map_raw[y][xx] == "R":
+        if Meta.ghost_turn in map_obj[y][xx].meta:
             return xx, y, dist
 
 
-def check_for_vertical_neighbours(map_raw, x, y, height, direction):
+def check_for_vertical_neighbours(map_obj, x, y, height, direction):
     dist = 0
-    for yy in range(height if direction > 0 else 0, y + direction, direction):
+    for yy in range(y + direction, height if direction > 0 else 0, direction):
         dist += 1
-        if map_raw[yy][x] == "W":
+        if not map_obj[yy][x].state:
             return None
-        if map_raw[yy][x] == "C" or map_raw[yy][x] == "T" or map_raw[yy][x] == "R":
+        if Meta.ghost_turn in map_obj[yy][x].meta:
             return x, yy, dist
 
-class Graph:
 
-    def __init__(self):
+class Graph:
+    def __init__(self, game, field_size=32):
+        self.field = Field(game, field_size)
         self.verts = []
-        self.walls = []
-        self.width = 0
-        self.height = 0
+        self.width = len(self.field.matrix[len(self.field.matrix)-1])
+        self.height = len(self.field.matrix)
         pass
 
-    def generate(self, map_path):
-        try:
-            map_file = open(map_path, "r")
-        except FileNotFoundError:
-            return False
-
-        map_raw = map_file.readlines()
-
-        self.height = len(map_raw)
-        self.width = len(map_raw[len(map_raw)-1])
-
+    def generate(self):
         for y in range(0, self.height):
             for x in range(0, self.width):
-                if map_raw[y][x] == "W":
-                    self.walls.append((x, y))
-                if map_raw[y][x] == "C" or map_raw[y][x] == "T" or map_raw[y][x] == "R":
+                if Meta.ghost_turn in self.field.map[y][x].meta:
                     self.verts.append(Vert(x, y))
 
         for vert in self.verts:
-            neighbours = [check_for_horizontal_neighbours(map_raw, vert.x, vert.y, self.width, 1),
-                          check_for_horizontal_neighbours(map_raw, vert.x, vert.y, self.width, -1),
-                          check_for_vertical_neighbours(map_raw, vert.x, vert.y, self.width, 1),
-                          check_for_vertical_neighbours(map_raw, vert.x, vert.y, self.width, -1)]
+            neighbours = [check_for_horizontal_neighbours(self.field.map, vert.x, vert.y, self.width, 1),
+                          check_for_horizontal_neighbours(self.field.map, vert.x, vert.y, self.width, -1),
+                          check_for_vertical_neighbours(self.field.map, vert.x, vert.y, self.height, 1),
+                          check_for_vertical_neighbours(self.field.map, vert.x, vert.y, self.height, -1)]
 
             for i in neighbours:
                 if i is not None:
@@ -80,10 +62,6 @@ class Graph:
                         if v.x == i[0] and v.y == i[1]:
                                 vert.neighbours.append((v, i[2]))
                                 break
-
-
-
-        map_file.close()
         return True
 
     def is_vert(self, x, y):
@@ -101,8 +79,9 @@ class Graph:
 
 def main():
     # Тестовый запуск: генерирует граф, отрисовыввает его в консоли и выдает соседи 1 точки
-    g = Graph()
-    g.generate("../assets/maps/real_map.txt")
+    game = pygame.init()
+    g = Graph(game=game)
+    g.generate()
 
     for i in range(0, g.height):
         for j in range(0, g.width):
