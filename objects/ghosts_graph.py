@@ -70,19 +70,27 @@ class Graph:
                 return True
         return False
 
-    def get_vert(self, x, y):
+    def get_vert_by_coord(self, x, y):
         for i in self.verts:
             if i.x == x and i.y == y:
                 return i
         return None
+    def get_vert(self, vert):
+        x = vert.x
+        y = vert.y
+        return self.get_vert_by_coord(x, y)
 
-
+# Заменить в field ../ на ./
 def main():
     # Тестовый запуск: генерирует граф, отрисовыввает его в консоли и выдает соседи 1 точки
     game = pygame.init()
     g = Graph(game=game)
     g.generate()
+    a = g.get_vert_by_coord(1,1)
+    for i in a.neighbours :
+        print(i[0].x, i[0].y )
 
+    print(a.neighbours )
     for i in range(0, g.height):
         for j in range(0, g.width):
             if g.is_vert(j, i):
@@ -91,7 +99,6 @@ def main():
                 print("-", end="")
         print("\n", end="")
 
-    print(g.get_vert(6, 1).get_all_neighbours())
 
 
 if __name__ == '__main__':
