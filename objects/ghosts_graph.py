@@ -12,9 +12,6 @@ class Vert:
         self.y = y
         self.neighbours = []
 
-    def add_neighbour(self, x, y, dist):
-        self.neighbours.append((x, y, dist))
-
     def get_all_neighbours(self):
         return self.neighbours
 
@@ -24,6 +21,25 @@ class Vert:
                 return i[2]
         return None
 
+
+def check_for_horizontal_neighbours(map_raw, x, y, width, direction):
+    dist = 0
+    for xx in range(x + direction, width if direction > 0 else 0, direction):
+        dist += 1
+        if map_raw[y][xx] == "W":
+            return None
+        if map_raw[y][xx] == "C" or map_raw[y][xx] == "T" or map_raw[y][xx] == "R":
+            return xx, y, dist
+
+
+def check_for_vertical_neighbours(map_raw, x, y, height, direction):
+    dist = 0
+    for yy in range(height if direction > 0 else 0, y + direction, direction):
+        dist += 1
+        if map_raw[yy][x] == "W":
+            return None
+        if map_raw[yy][x] == "C" or map_raw[yy][x] == "T" or map_raw[yy][x] == "R":
+            return x, yy, dist
 
 class Graph:
 
@@ -53,41 +69,19 @@ class Graph:
                     self.verts.append(Vert(x, y))
 
         for vert in self.verts:
-            dist = 0
-            for x in range(vert.x + 1, self.width):
-                dist += 1
-                if map_raw[vert.y][x] == "W":
-                    break
-                if map_raw[vert.y][x] == "C" or map_raw[vert.y][x] == "T" or map_raw[vert.y][x] == "R":
-                    vert.add_neighbour(x, vert.y, dist)
-                    break
+            neighbours = [check_for_horizontal_neighbours(map_raw, vert.x, vert.y, self.width, 1),
+                          check_for_horizontal_neighbours(map_raw, vert.x, vert.y, self.width, -1),
+                          check_for_vertical_neighbours(map_raw, vert.x, vert.y, self.width, 1),
+                          check_for_vertical_neighbours(map_raw, vert.x, vert.y, self.width, -1)]
 
-            dist = 0
-            for x in range(vert.x - 1, -1, -1):
-                dist += 1
-                if map_raw[vert.y][x] == "W":
-                    break
-                if map_raw[vert.y][x] == "C" or map_raw[vert.y][x] == "T" or map_raw[vert.y][x] == "R":
-                    vert.add_neighbour(x, vert.y, dist)
-                    break
+            for i in neighbours:
+                if i is not None:
+                    for v in self.verts:
+                        if v.x == i[0] and v.y == i[1]:
+                                vert.neighbours.append((v, i[2]))
+                                break
 
-            dist = 0
-            for y in range(vert.y + 1, self.height):
-                dist += 1
-                if map_raw[y][vert.x] == "W":
-                    break
-                if map_raw[y][vert.x] == "C" or map_raw[y][vert.x] == "T" or map_raw[vert.y][x] == "R":
-                    vert.add_neighbour(vert.x, y, dist)
-                    break
 
-            dist = 0
-            for y in range(vert.y - 1, -1, -1):
-                dist += 1
-                if map_raw[y][vert.x] == "W":
-                    break
-                if map_raw[y][vert.x] == "C" or map_raw[y][vert.x] == "T" or map_raw[vert.y][x] == "R":
-                    vert.add_neighbour(vert.x, y, dist)
-                    break
 
         map_file.close()
         return True
