@@ -9,5 +9,6 @@ class ObjectRenderer(PyGameRenderer):
 
     def render(self, entity, rect):
         self.obj.game.screen = pygame.Surface(rect.size)
+        self.obj.game.screen.set_colorkey((0, 0, 0))
         self.obj.process_draw()
         return self.obj.game.screen

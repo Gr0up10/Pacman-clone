@@ -16,8 +16,8 @@ class GhostBase(DrawObject):
 
         self.x = x
         self.y = y
-        self.rect.centery=x
-        self.rect.centerx=y
+        self.rect.centery = x
+        self.rect.centerx = y
 
         self.window_width = self.game.width
         self.window_height = self.game.height
@@ -28,6 +28,7 @@ class GhostBase(DrawObject):
 
     def collides_with(self, obj):
         return pygame.sprite.collide_mask(self, obj)
+
 
 class GhostBaseScared(GhostBase):
     def_texture = 'assets/images/ghosts/afraid_0.png'

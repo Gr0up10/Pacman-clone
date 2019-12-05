@@ -16,6 +16,7 @@ from pysmile.renderers.tile_renderer import TileRenderer
 from pysmile.renderers.text import TextRenderer
 
 from components.move_component import MoveComponent
+from components.object_update import ObjectUpdate
 from components.score_increaser import ScoreIncreaserComponent
 from components.pacman_collisions import PacmanCollisions
 from objects.ghost_base import GhostBase
@@ -38,17 +39,19 @@ class MainScene(Scene):
 
         self.scoreboard = ScoreBoard()
         super().__init__(game)
+
+        self.ghost_obj = None
         self.field_obj = None
 
     def create_objects(self):
         self.field_obj = Field(self.game, 32)
+        self.ghost_obj = GhostMove(self.game, self.field_obj)
+
         field = Entity()
         self.add_entity(field)
         shader = Shader.init_from_files("assets/shaders/walls/walls.vert", "assets/shaders/walls/walls.frag")
         field.add_component(TransformComponent(Vector2(0, 0)))
-        field.add_component(PyGameRendererComponent(ObjectRenderer(self.field_obj), self.game.screen_size, shader))
-
-        self.objects.append(GhostMove(self.game,self.field_obj))
+        field.add_component(PyGameRendererComponent(ObjectRenderer(self.field_obj), self.game.screen_size, True, shader))
 
     def add_grain(self, rect, size, big=False):
         grain = Entity()
@@ -72,6 +75,12 @@ class MainScene(Scene):
         for g in self.field_obj.get_cells_by_type(Floor, Meta.grain_big):
             self.game_over.max_grains_count += 1
             self.add_grain(g.rect, big_grain_size, True)
+
+        ghost = Entity()
+        self.add_entity(ghost)
+        ghost.add_component(TransformComponent(Vector2(0, 0)))
+        ghost.add_component(PyGameRendererComponent(ObjectRenderer(self.ghost_obj), self.game.screen_size))
+        ghost.add_component(ObjectUpdate(self.ghost_obj))
 
         score_label = Entity()
         self.add_entity(score_label)
