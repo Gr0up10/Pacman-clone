@@ -15,6 +15,7 @@ from pysmile.tilemap.tileset import TileSet
 from pysmile.renderers.tile_renderer import TileRenderer
 from pysmile.renderers.text import TextRenderer
 
+from components.ghost_collision import GhostCollision
 from components.move_component import MoveComponent
 from components.object_update import ObjectUpdate
 from components.score_increaser import ScoreIncreaserComponent
@@ -102,7 +103,6 @@ class MainScene(Scene):
             TextRenderer("high score", font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
 
         high_score_num = self.scoreboard.get_instance(0)[1]
-        print(high_score_num)
         high_score = Entity()
         self.add_entity(high_score)
         high_score.add_component(TransformComponent(Vector2(self.game.width - 200, 70)))
@@ -133,3 +133,4 @@ class MainScene(Scene):
         player.add_component(BoxCollider((32, 32)))
         player.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts, animation_speed=0.3), (32, 32)))
         player.add_component(GrainCollisions())
+        player.add_component(GhostCollision([self.ghost_obj]))

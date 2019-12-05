@@ -2,6 +2,7 @@ import pygame
 from pysmile.component import Component
 from scenes.menu import MenuScene
 from events.collect_grain import CollectSmallGrainEvent, CollectBigGrainEvent
+from events.game_over import GameOverEvent
 
 from pysmile.colors import Colors
 from pysmile.entity import Entity
@@ -32,7 +33,11 @@ class GameOverComponent(Component):
     def go_to_menu(self):
         self.entity.current_scene = MenuScene
 
+    def game_over_event(self, _):
+        self.game_over()
+
     def game_over(self):
+        print("game over")
         scene = self.entity.scene
 
         black_back = Entity()
@@ -68,6 +73,7 @@ class GameOverComponent(Component):
         self.entity.event_manager.unbind(CollectSmallGrainEvent, self.collect_grain)
         self.entity.event_manager.unbind(CollectBigGrainEvent, self.collect_grain)
         self.entity.event_manager.unbind(KeyPressEvent, self.key_press)
+        self.entity.event_manager.unbind(GameOverEvent, self.game_over_event)
 
     def key_press(self, ev):
         if ev.key == pygame.K_g:
@@ -78,3 +84,4 @@ class GameOverComponent(Component):
         entity.event_manager.bind(CollectSmallGrainEvent, self.collect_grain)
         entity.event_manager.bind(CollectBigGrainEvent, self.collect_grain)
         entity.event_manager.bind(KeyPressEvent, self.key_press)
+        entity.event_manager.bind(GameOverEvent, self.game_over_event)
