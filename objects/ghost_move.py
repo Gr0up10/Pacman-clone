@@ -78,12 +78,12 @@ class GhostMove(GhostBase):
         c = self.checker(self.check_offset)  # значение меты
         if c.meta is not None and Meta.teleport2 in c.meta:
             pos = self.field.get_cells_by_type(Floor, Meta.teleport1)[0].rect
-            self.rect.centery = pos.centerx
-            self.rect.centerx = pos.centery
+            self.rect.centerx = pos.centerx
+            self.rect.centery = pos.centery
         elif c.meta is not None and Meta.teleport1 in c.meta:
             pos = self.field.get_cells_by_type(Floor, Meta.teleport2)[0].rect
-            self.rect.centery = pos.centerx
-            self.rect.centerx = pos.centery
+            self.rect.centerx = pos.centerx
+            self.rect.centery = pos.centery
 
     def process_logic(self):
         self.check()
