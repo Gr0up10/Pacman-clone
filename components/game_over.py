@@ -1,5 +1,8 @@
 import pygame
 from pysmile.component import Component
+
+from constants import Sounds
+from events.play_sound import PlaySoundEvent
 from scenes.menu import MenuScene
 from events.collect_grain import CollectSmallGrainEvent, CollectBigGrainEvent
 from events.game_over import GameOverEvent
@@ -38,6 +41,8 @@ class GameOverComponent(Component):
 
     def game_over(self):
         print("game over")
+        self.entity.event_manager.trigger_event(PlaySoundEvent(Sounds.DEATH, 0, 20))
+
         scene = self.entity.scene
 
         black_back = Entity()

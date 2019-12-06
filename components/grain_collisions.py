@@ -6,6 +6,8 @@ from pysmile.events.update import UpdateEvent
 from pysmile.math.vector2 import Vector2
 import math
 from events.collect_grain import CollectSmallGrainEvent, CollectBigGrainEvent
+from events.play_sound import PlaySoundEvent
+from constants import Sounds
 
 
 class GrainCollisions(Component):
@@ -34,6 +36,7 @@ class GrainCollisions(Component):
                 else:
                     self.entity.event_manager.trigger_event(CollectSmallGrainEvent())
                 self.entity.scene.remove_entity(grain)
+                self.entity.event_manager.trigger_event(PlaySoundEvent(Sounds.CHOMP, -1, 20))
 
     def removed(self):
         self.entity.event_manager.unbind(UpdateEvent, self.update)
