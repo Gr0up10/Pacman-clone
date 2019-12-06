@@ -45,23 +45,34 @@ class Field(DrawObject):
                     self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=Meta.pacman_spawn))
                 elif self.matrix[row][col] == 'W':
                     self.map[row].append(Wall(self.game, *cell_pos, False, self.size))
-                elif self.matrix[row][col] == 'R':
-                    self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=Meta.ghost_turn))
                 elif self.matrix[row][col] == 'S':
                     self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=Meta.grain_small))
                 elif self.matrix[row][col] == 'B':
                     self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=Meta.grain_big))
-                elif self.matrix[row][col] == 'C':
-                    self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=[Meta.ghost_turn, Meta.grain_small]))
-                elif self.matrix[row][col] == 'T':
-                    self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=[Meta.grain_big, Meta.ghost_turn]))
-
                 elif self.matrix[row][col] == 't':
                     self.map[row].append(
                         Floor(self.game, *cell_pos, True, self.size, meta=[Meta.teleport2]))
                 elif self.matrix[row][col] == 'p':
                     self.map[row].append(
                         Floor(self.game, *cell_pos, True, self.size, meta=[Meta.teleport1]))
+
+        self.find_turns()
+
+    def find_turns(self):
+        turn_patterns = [((0, 1), (1, 0)),
+                         ((0, 1), (-1, 0)),
+                         ((0, -1), (1, 0)),
+                         ((0, -1), (-1, 0))]
+        for row in range(len(self.map)):
+            for col in range(len(self.map[row])):
+                for pat in turn_patterns:
+                    accepted = True
+                    for dir in pat:
+                        if isinstance(self.get_cell_iter(col+dir[0], row+dir[1]), Wall):
+                            accepted = False
+                            break
+                    if accepted:
+                        self.get_cell_iter(col, row).meta.append(Meta.ghost_turn)
 
     # Отрисовка фона и каждой Cell(Клетки)
     def process_draw(self):
