@@ -2,7 +2,7 @@
 .idea/
 venv*/
 ./src
-binaries/data.score
+data/data.score
 third_party/button/PixelFJVerdana12pt.ttf
 
 
