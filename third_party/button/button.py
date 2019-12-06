@@ -1,5 +1,5 @@
 import pygame as pg
-
+from constants import Sounds
 
 class Button(object):
     """A fairly straight forward button class."""
@@ -54,6 +54,8 @@ class Button(object):
             self.on_release(event)
 
     def on_click(self, event):
+        pg.mixer_music.load(Sounds.CLICK)
+        pg.mixer_music.play()
         if self.rect.collidepoint(event.pos):
             self.clicked = True
             if not self.call_on_release:

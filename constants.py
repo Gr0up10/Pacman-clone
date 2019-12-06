@@ -14,3 +14,4 @@ class Sounds:
     EAT_FRUIT = "assets/sounds/pacman_eatfruit.wav"
     EAT_GHOST = "assets/sounds/pacman_eatghost.wav"
     INTERMISSION = "assets/sounds/pacman_intermission.wav"
+    CLICK = "assets/sounds/click.mp3"
