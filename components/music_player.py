@@ -11,6 +11,7 @@ class MusicPlayerComponent(Component):
         self.entity = None
         self.pause_after = None
         self.pause_song = None
+        self.loop = 0
 
     def play(self, event):
         self.pause_after = event.pause_after
@@ -18,6 +19,14 @@ class MusicPlayerComponent(Component):
             pygame.mixer_music.unpause()
             return
 
+        if pygame.mixer_music.get_busy() and self.loop:
+            pygame.mixer_music.stop()
+
+        if pygame.mixer_music.get_busy() and event.count == -1:
+            pygame.mixer_music.queue(event.sound)
+            return
+
+        self.loop = event.count == -1
         pygame.mixer_music.load(event.sound)
         pygame.mixer_music.play(event.count)
         if self.pause_after:
