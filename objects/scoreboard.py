@@ -8,14 +8,14 @@ class ScoreBoard:
         self.data = []
 
         try:
-            data_file = open("binaries/data.score", "r")
+            data_file = open("data/data.score", "r")
             raw_data = data_file.readlines()
             initials = raw_data[0].split(' ')
             scores = list(map(int, raw_data[1].split(' ')))
 
         except FileNotFoundError:
-            os.mkdir("binaries/")
-            data_file = open("binaries/data.score", "w+")
+            os.mkdir("data/")
+            data_file = open("data/data.score", "w+")
             initials = ["---"] * 10
             scores = [0] * 10
             data_file.write("--- --- --- --- --- --- --- --- --- ---" + '\n' +
@@ -35,7 +35,7 @@ class ScoreBoard:
         self.data.sort(key=lambda a: a[1], reverse=True)
         self.data.pop(10)
 
-        with open("binaries/data.score", "w") as data_file:
+        with open("data/data.score", "w") as data_file:
             raw_initials = ""
             raw_scores = ""
             for instance in self.data:

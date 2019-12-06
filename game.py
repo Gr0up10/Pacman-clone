@@ -6,6 +6,8 @@ from scenes.base import Scene
 from pysmile.components.exit_on_escape import ExitOnEscape
 from pysmile.component import Component
 
+from settings import Settings
+
 
 class Game(PSGame):
     def __init__(self, width=1024, height=768):
@@ -18,6 +20,7 @@ class Game(PSGame):
         self.setup_default_components((width, height))
         self.current_scene = MainScene
         self.add_component(ExitOnEscape())
+        self.settings = Settings()
 
     def __setattr__(self, key, value):
         if key == "current_scene":

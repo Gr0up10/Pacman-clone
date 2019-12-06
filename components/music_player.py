@@ -14,6 +14,9 @@ class MusicPlayerComponent(Component):
         self.loop = 0
 
     def play(self, event):
+        if not self.entity.scene.game.settings.sounds:
+            return
+
         self.pause_after = event.pause_after
         if self.pause_song == event.sound:
             pygame.mixer_music.unpause()

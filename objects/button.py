@@ -1,5 +1,6 @@
+import pygame as pg
 from third_party.button import Button
-from constants import Color
+from constants import Color, Sounds
 from objects.base import DrawObject
 
 
@@ -27,6 +28,10 @@ class Btn(DrawObject):
         pass
 
     def process_event(self, event):
+        if event == pg.MOUSEBUTTONDOWN and self.game.settings.sounds:
+            pg.mixer_music.load(Sounds.CLICK)
+            pg.mixer_music.play()
+
         self.internal_button.check_event(event)
 
     def process_draw(self):
