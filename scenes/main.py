@@ -17,6 +17,7 @@ from pysmile.renderers.text import TextRenderer
 
 from components.ghost_collision import GhostCollision
 from components.move_component import MoveComponent
+from components.music_player import MusicPlayerComponent
 from components.object_update import ObjectUpdate
 from components.score_increaser import ScoreIncreaserComponent
 from components.pacman_collisions import PacmanCollisions
@@ -37,6 +38,7 @@ class MainScene(Scene):
     def __init__(self, game):
         self.game_over = GameOverComponent()
         game.add_component(self.game_over)
+        game.add_component(MusicPlayerComponent())
 
         self.scoreboard = ScoreBoard()
         super().__init__(game)
@@ -65,6 +67,7 @@ class MainScene(Scene):
     def removed(self):
         super().removed()
         self.game.remove_component(GameOverComponent)
+        self.game.remove_component(MusicPlayerComponent)
 
     def add_entities(self):
         grain_size = 8

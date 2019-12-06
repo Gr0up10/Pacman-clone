@@ -13,7 +13,7 @@ class Field(DrawObject):
 
     # size - размер клетки, аргумент для создания клеток
     def __init__(self, game, size):
-
+        super().__init__(game)
         self.game = game
         self.size = size
 

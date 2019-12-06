@@ -11,6 +11,7 @@ class Game(PSGame):
     def __init__(self, width=1024, height=768):
         pygame.display.init()
         pygame.font.init()
+        pygame.mixer.init()
         super().__init__()
 
         self.screen = None
