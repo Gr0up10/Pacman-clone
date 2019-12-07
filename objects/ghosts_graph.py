@@ -14,7 +14,10 @@ class Vert:
             if i[0].x == x and i[1].y == y:
                 return i
         return None
-
+    def equal(self,b):
+        if self.x == b.x and self.y == b.y:
+            return True
+        return False
 
 def check_for_horizontal_neighbours(map_obj, x, y, width, direction):
     dist = 0
@@ -70,18 +73,31 @@ class Graph:
                 return True
         return False
 
-    def get_vert(self, x, y):
+    def get_vert_by_coord(self, x, y):
         for i in self.verts:
             if i.x == x and i.y == y:
                 return i
         return None
 
+    def get_vert(self, vert):
+        x = vert.x
+        y = vert.y
+        return self.get_vert_by_coord(x, y)
 
+# Заменить в field ../ на ./
 def main():
     # Тестовый запуск: генерирует граф, отрисовыввает его в консоли и выдает соседи 1 точки
     game = pygame.init()
     g = Graph(game=game)
     g.generate()
+    a = g.get_vert_by_coord(23,20)
+    print('All verts:')
+    for i in g.verts:
+        print("({}, {})".format(i.x, i.y))
+
+    print('neighbours: ')
+    for i in a.neighbours :
+        print("({}, {})".format(i[0].x, i[0].y))
 
     for i in range(0, g.height):
         for j in range(0, g.width):
@@ -91,7 +107,6 @@ def main():
                 print("-", end="")
         print("\n", end="")
 
-    print(g.get_vert(6, 1).get_all_neighbours())
 
 
 if __name__ == '__main__':
