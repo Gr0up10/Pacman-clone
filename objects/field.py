@@ -24,7 +24,7 @@ class Field(DrawObject):
         self.map = []
 
         # Приведение текстовой карты к двумерному массиву
-        with open('./assets/maps/real_map.txt', 'r') as file:
+        with open('../assets/maps/real_map.txt', 'r') as file:
             lines = file.readlines()
             for row in lines:
                 row = list(row)

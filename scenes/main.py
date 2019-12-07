@@ -19,6 +19,7 @@ from components.ghost_collision import GhostCollision
 from components.move_component import MoveComponent
 from components.music_player import MusicPlayerComponent
 from components.object_update import ObjectUpdate
+from components.pinky_move import PinkyMoveComponent
 from components.score_increaser import ScoreIncreaserComponent
 from components.pacman_collisions import PacmanCollisions
 from objects.ghost_base import GhostBase
@@ -85,6 +86,12 @@ class MainScene(Scene):
         ghost.add_component(TransformComponent(Vector2(0, 0)))
         ghost.add_component(PyGameRendererComponent(ObjectRenderer(self.ghost_obj), self.game.screen_size))
         ghost.add_component(ObjectUpdate(self.ghost_obj))
+
+        pinky = Entity()
+        self.add_entity(pinky)
+        pinky.add_component(TransformComponent(Vector2(32, 32)))
+        pinky.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/pink.png"), (32, 32)))
+        pinky.add_component(PinkyMoveComponent(self.field_obj, 2))
 
         score_label = Entity()
         self.add_entity(score_label)

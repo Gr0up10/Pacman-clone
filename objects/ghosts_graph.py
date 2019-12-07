@@ -1,6 +1,9 @@
 import pygame
+from pysmile.math.vector2 import Vector2
+
 from objects.base_cell import Cell, Meta
 from objects.field import Field
+from math import sqrt
 
 
 class Vert:
@@ -9,39 +12,31 @@ class Vert:
         self.y = y
         self.neighbours = []
 
+    @property
+    def vector(self):
+        return Vector2(self.x, self.y)
+
     def get_neighbour(self, x, y):
         for i in self.neighbours:
             if i[0].x == x and i[1].y == y:
                 return i
         return None
+
     def equal(self,b):
         if self.x == b.x and self.y == b.y:
             return True
         return False
 
-def check_for_horizontal_neighbours(map_obj, x, y, width, direction):
-    dist = 0
-    for xx in range(x + direction, width if direction > 0 else 0, direction):
-        dist += 1
-        if not map_obj[y][xx].state:
-            return None
-        if Meta.ghost_turn in map_obj[y][xx].meta:
-            return xx, y, dist
-
-
-def check_for_vertical_neighbours(map_obj, x, y, height, direction):
-    dist = 0
-    for yy in range(y + direction, height if direction > 0 else 0, direction):
-        dist += 1
-        if not map_obj[yy][x].state:
-            return None
-        if Meta.ghost_turn in map_obj[yy][x].meta:
-            return x, yy, dist
+    # Функция возвращает растояние между двумя Vert()
+    def distance(self, b):
+        (x1, y1) = self.x, self.y
+        (x2, y2) = b.x, b.y
+        return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2))
 
 
 class Graph:
-    def __init__(self, game, field_size=32):
-        self.field = Field(game, field_size)
+    def __init__(self, field):
+        self.field = field
         self.verts = []
         self.width = len(self.field.matrix[len(self.field.matrix)-1])
         self.height = len(self.field.matrix)
@@ -54,10 +49,10 @@ class Graph:
                     self.verts.append(Vert(x, y))
 
         for vert in self.verts:
-            neighbours = [check_for_horizontal_neighbours(self.field.map, vert.x, vert.y, self.width, 1),
-                          check_for_horizontal_neighbours(self.field.map, vert.x, vert.y, self.width, -1),
-                          check_for_vertical_neighbours(self.field.map, vert.x, vert.y, self.height, 1),
-                          check_for_vertical_neighbours(self.field.map, vert.x, vert.y, self.height, -1)]
+            neighbours = [self.check_for_horizontal_neighbours(self.field.map, vert.x, vert.y, self.width, 1),
+                          self.check_for_horizontal_neighbours(self.field.map, vert.x, vert.y, self.width, -1),
+                          self.check_for_vertical_neighbours(self.field.map, vert.x, vert.y, self.height, 1),
+                          self.check_for_vertical_neighbours(self.field.map, vert.x, vert.y, self.height, -1)]
 
             for i in neighbours:
                 if i is not None:
@@ -84,13 +79,34 @@ class Graph:
         y = vert.y
         return self.get_vert_by_coord(x, y)
 
+    @staticmethod
+    def check_for_horizontal_neighbours(map_obj, x, y, width, direction):
+        dist = 0
+        for xx in range(x + direction, width if direction > 0 else 0, direction):
+            dist += 1
+            if not map_obj[y][xx].state:
+                return None
+            if Meta.ghost_turn in map_obj[y][xx].meta:
+                return xx, y, dist
+
+    @staticmethod
+    def check_for_vertical_neighbours(map_obj, x, y, height, direction):
+        dist = 0
+        for yy in range(y + direction, height if direction > 0 else 0, direction):
+            dist += 1
+            if not map_obj[yy][x].state:
+                return None
+            if Meta.ghost_turn in map_obj[yy][x].meta:
+                return x, yy, dist
+
+
 # Заменить в field ../ на ./
 def main():
     # Тестовый запуск: генерирует граф, отрисовыввает его в консоли и выдает соседи 1 точки
     game = pygame.init()
-    g = Graph(game=game)
+    g = Graph(Field(game, 32))
     g.generate()
-    a = g.get_vert_by_coord(23,20)
+    a = g.get_vert_by_coord(23, 20)
     print('All verts:')
     for i in g.verts:
         print("({}, {})".format(i.x, i.y))
@@ -106,7 +122,6 @@ def main():
             else:
                 print("-", end="")
         print("\n", end="")
-
 
 
 if __name__ == '__main__':

@@ -6,6 +6,7 @@ from pysmile.components.renderer import RendererComponent
 from pysmile.renderers.tile_renderer import TileRenderer
 
 from components.pacman_collisions import PacmanCollisions
+from events.change_tile import PacmanChangeTileEvent
 
 
 class MoveComponent(Component):
@@ -15,6 +16,7 @@ class MoveComponent(Component):
         self.speed = speed
         self.direction = Vector2(1, 0)
         self.new_direction = None
+        self.previous_tile = None
 
     def add_direction(self, x, y):
         self.new_direction = Vector2(x, y)
@@ -42,6 +44,12 @@ class MoveComponent(Component):
                 rend.renderer.rotation = None
 
         trans.position += self.direction * self.speed
+
+        tile_size = collsion.field.size
+        new_tile = Vector2(trans.x//tile_size, trans.y//tile_size)
+        if self.previous_tile is None or self.previous_tile != new_tile:
+            self.previous_tile = new_tile
+            self.entity.event_manager.trigger_event(PacmanChangeTileEvent(self.entity))
 
     def removed(self):
         self.entity.event_manager.bind(UpdateEvent, self.update)
