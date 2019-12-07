@@ -24,7 +24,6 @@ class Field(DrawObject):
         self.map = []
 
         # Приведение текстовой карты к двумерному массиву
-        #!!!!!!!!!! Временная замена, заменить ../ на ./
         with open('./assets/maps/real_map.txt', 'r') as file:
             lines = file.readlines()
             for row in lines:

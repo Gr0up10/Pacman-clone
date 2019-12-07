@@ -19,7 +19,7 @@ class Queue:
 
 
 # Основной класс, который обрабатывает поиск по карте
-class A_finder:
+class Afinder:
     def __init__(self, game):
         # Посещённые вершины
         self.frontier = Queue()
@@ -128,9 +128,9 @@ def main():
 
     game = pygame.init()
     # Инициализируем поисковик
-    finder = A_finder(game)
+    finder = Afinder(game)
     # Можно использовать несколько поисковиков
-    aggr_finder = A_finder(game)
+    aggr_finder = Afinder(game)
 
     # Точки
     start= (0,0)
