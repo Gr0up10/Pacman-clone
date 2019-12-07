@@ -25,7 +25,7 @@ class Field(DrawObject):
 
         # Приведение текстовой карты к двумерному массиву
         #!!!!!!!!!! Временная замена, заменить ../ на ./
-        with open('../assets/maps/real_map.txt', 'r') as file:
+        with open('./assets/maps/real_map.txt', 'r') as file:
             lines = file.readlines()
             for row in lines:
                 row = list(row)
