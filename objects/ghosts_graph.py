@@ -14,7 +14,10 @@ class Vert:
             if i[0].x == x and i[1].y == y:
                 return i
         return None
-
+    def equal(self,b):
+        if self.x == b.x and self.y == b.y:
+            return True
+        return False
 
 def check_for_horizontal_neighbours(map_obj, x, y, width, direction):
     dist = 0
@@ -75,6 +78,7 @@ class Graph:
             if i.x == x and i.y == y:
                 return i
         return None
+
     def get_vert(self, vert):
         x = vert.x
         y = vert.y
@@ -86,11 +90,15 @@ def main():
     game = pygame.init()
     g = Graph(game=game)
     g.generate()
-    a = g.get_vert_by_coord(1,1)
-    for i in a.neighbours :
-        print(i[0].x, i[0].y )
+    a = g.get_vert_by_coord(23,20)
+    print('All verts:')
+    for i in g.verts:
+        print("({}, {})".format(i.x, i.y))
 
-    print(a.neighbours )
+    print('neighbours: ')
+    for i in a.neighbours :
+        print("({}, {})".format(i[0].x, i[0].y))
+
     for i in range(0, g.height):
         for j in range(0, g.width):
             if g.is_vert(j, i):

@@ -1,8 +1,9 @@
 import pygame
 import collections
+from math import sqrt
 from ghosts_graph import Graph, Vert
 
-
+# Класс представляет собой "обёртку" для стокового deque. Работает как "Первый вошёл, первый вышел"
 class Queue:
     def __init__(self):
         self.elements = collections.deque()
@@ -16,66 +17,132 @@ class Queue:
     def get(self):
         return self.elements.popleft()
 
+
+# Основной класс, который обрабатывает поиск по карте
 class A_finder:
     def __init__(self, game):
-        #Создаём очередь для Vert
+        # Посещённые вершины
         self.frontier = Queue()
-        #Может нужно не здесь инициировать? Зачем инициировать пустую visited?
-        self.visited = {}
-        #Создаём граф
+        # Создать граф
         self.graph = Graph(game=game)
-        #Генерим его
         self.graph.generate()
-    #Найти путь между A и B (Заменить x1, y1, x2, y2 на start(vert) и goal(vert)
-    def find_path(self, x1,y1 , x2, y2):
-        #Временное
-        start = self.graph.get_vert_by_coord(x1, y1)
-        goal = self.graph.get_vert_by_coord(x2, y2)
-        #Добавляем "начальную точку" в начало очереди
+
+    # Основная функция, для поиска пути использовать её. start/end_coord - кортежи координат (x,y)
+    def find_path(self, start_coord , goal_coord):
+
+        real_start = Vert(*start_coord)
+        real_goal = Vert(*goal_coord)
+
+        # Ближайшие вершины из нашего графа
+        start = self.find_closest_vert(real_start)
+        goal = self.find_closest_vert(real_goal)
+
+        # Добавляем "начальную точку" в начало очереди
         self.frontier.put(start)
-        #Сохранение предыдущих путей
+
+        # Сохранение предыдущих путей
         came_from = {}
         came_from[start] = None
 
-        #Пока не прошли все Vert на карте(или не нашли нужную)
         while not self.frontier.empty():
-            # current на начале = 1,1
             current = self.frontier.get()
-            #Если есть соседи(прочекать эту проверку)
-            if self.graph.get_vert(current).neighbours is not None:
-                #Проходим по всем соседям
-                for next in self.graph.get_vert(current).neighbours:
-                    #В коде ghosts_graph возвращается tuple, где [0] - это Vert, а [1] какое-то число(может позиция в сетке)
-                    #Если ещё не были здесь
-                    if next[0] not in came_from:
-                        #Добавляем Этот Vert в проходку
-                        self.frontier.put(next[0])
-                        #Говорим "откуда пришли"
-                        came_from[next[0]] = current
-            #Сам алгоритм поиска пути по прошедшему в обратном направлении, от goal до start
-            current = goal
-            #Начинаем путь с конца, созадём список с одним элементом
-            path = [current]
-            #Пока не пришли в начало
-            while current != start:
-                current = came_from[current]
-                path.append(current)
-        #Тестовый вывод выводит с конца в начало
-        print(path[0].x, path[0].y, path[1].x, path[1].y)
-def main():
-    game = pygame.init()
-    graph = Graph(game=game)
-    finder = A_finder(game)
-    finder.find_path(1,1, 6,1)
-    for i in range(0, graph.height):
-        for j in range(0, graph.width):
-            if graph.is_vert(j, i):
+
+            for next in self.graph.get_vert(current).neighbours:
+
+                # В коде ghosts_graph возвращается tuple, где [0] - это Vert, а [1] какое-то число
+                if next[0] not in came_from:
+                    # Добавляем Этот Vert в проход
+                    self.frontier.put(next[0])
+
+                    # Говорим "откуда пришли"
+                    came_from[next[0]] = current
+
+        # Создание пути по "проходу"
+        path = self.create_route(came_from, goal, start, real_start, real_goal)
+        return path
+
+    # Создаём путь от обратного(от goal до start) и разворачиваем его
+    def create_route(self, came_from, goal, start, real_start, real_goal):
+        current = goal
+
+        # Начинаем путь с конца(настоящей точки, а не ближайшей из графа), создаём список с одним элементом
+        path = [real_goal]
+
+        while current != start:
+            current = came_from[current]
+            path.append(current)
+
+        # Добавляем настоящую стартовую позицию
+        path.append(real_start)
+
+        # Разворачиваем, чтобы начинать со real_start
+        path.reverse()
+
+        # Возвращаем список Vert()
+        return path
+
+    # Находим ближайшую точку из графа по расстанию из heuristic()
+    def find_closest_vert(self, point):
+        min_len = 1000
+        closest_vert = None
+
+        for vert in self.graph.verts:
+            if heuristic(point, vert) < min_len:
+                min_len = heuristic(point, vert)
+                closest_vert = vert
+
+        return closest_vert
+
+# Функция возвращает растояние между двумя Vert()
+def heuristic( a, b):
+    (x1, y1) = a.x, a.y
+    (x2, y2) = b.x, b.y
+    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2))
+# Функция выводит путь по координатам
+def print_path(path):
+    for i in path:
+        print("({}, {})".format(i.x, i.y))
+    print('')
+# Функция рисует путь на "карте"
+def print_path_on_map(finder, path):
+    graph = finder.graph
+    print_path(path)
+    for i in range(graph.height):
+        for j in range(graph.width):
+            check = False
+            for k in path:
+                if Vert(j, i).equal(k):
+                    check = True
+            if check:
+                print("!", end="")
+            elif graph.is_vert(j,i):
                 print("0", end="")
             else:
                 print("-", end="")
-        print("\n", end="")
+        print('')
+    print('')
 
+
+# Пример использования
+def main():
+
+    game = pygame.init()
+    # Инициализируем поисковик
+    finder = A_finder(game)
+    # Можно использовать несколько поисковиков
+    aggr_finder = A_finder(game)
+
+    # Точки
+    start= (0,0)
+    goal = (20,21)
+    goal2 = (10, 12)
+    # Поиск пути
+    path = finder.find_path(start, goal)
+    path2 = aggr_finder.find_path(start, goal2)
+
+    # Вывод в терминал(для проверки)
+    print_path_on_map(finder, path)
+    print_path_on_map(aggr_finder, path2)
 
 if __name__ == '__main__':
     main()
-
