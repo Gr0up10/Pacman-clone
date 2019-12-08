@@ -1,6 +1,6 @@
 import pygame
 import collections
-from ghosts_graph import Graph, Vert
+from objects.ghosts_graph import Graph, Vert
 
 
 # Класс представляет собой "обёртку" для стокового deque. Работает как "Первый вошёл, первый вышел"
@@ -39,13 +39,8 @@ class Afinder:
 
     # Основная функция, для поиска пути использовать её. start/end_coord - кортежи координат (x,y)
     def find_path(self, start_coord, goal_coord):
-        out_vec = not isinstance(start_coord, tuple)
-        if not out_vec:
-            real_start = Vert(*start_coord)
-            real_goal = Vert(*goal_coord)
-        else:
-            real_start = self.vec2vert(start_coord)
-            real_goal = self.vec2vert(goal_coord)
+        real_start = self.vec2vert(start_coord)
+        real_goal = self.vec2vert(goal_coord)
 
         # Ближайшие вершины из нашего графа
         start = self.find_closest_vert(real_start)
@@ -72,31 +67,29 @@ class Afinder:
                     came_from[next[0]] = current
 
         # Создание пути по "проходу"
-        path = self.create_route(came_from, goal, start, real_start, real_goal, out_vec)
+        path = self.create_route(came_from, goal, start, start_coord, real_goal)
         return path
 
     # Создаём путь от обратного(от goal до start) и разворачиваем его
-    def create_route(self, came_from, goal, start, real_start, real_goal, out_vec):
+    def create_route(self, came_from, goal, start, start_coord, real_goal):
         current = goal
 
         # Начинаем путь с конца(настоящей точки, а не ближайшей из графа), создаём список с одним элементом
-        path = [real_goal]
-
-        for v, m in came_from.items():
-            print(v, m)
-            if v and m:
-                print("{} {} -> {} {}".format(v.x, v.y, m.x, m.y))
-
+        path = [self.vert2vec(real_goal)]
         while current != start:
-            print(current.x, current.y)
-            current = came_from[current]
-            if out_vec:
-                path.append(self.vert2vec(current))
-            else:
-                path.append(current)
+            ncurrent = came_from[current]
+            # Если реальный старт ближе к следующей вершине то выбираем его
+            if ncurrent == start:
+                cur_vec = self.vert2vec(current)
+                next_vec = self.vert2vec(ncurrent)
+                if cur_vec.distance_to(start_coord) < cur_vec.distance_to(next_vec):
+                    break
+
+            path.append(self.vert2vec(ncurrent))
+            current = ncurrent
 
         # Добавляем настоящую стартовую позицию
-        path.append(real_start)
+        #path.append(real_start)
 
         # Разворачиваем, чтобы начинать со real_start
         path.reverse()
@@ -149,9 +142,9 @@ def main():
 
     game = pygame.init()
     # Инициализируем поисковик
-    finder = Afinder(Field(game, 32))
+    finder = Afinder(Field(game, 32, '../assets/maps/real_map.txt'))
     # Можно использовать несколько поисковиков
-    aggr_finder = Afinder(Field(game, 32))
+    aggr_finder = Afinder(Field(game, 32, '../assets/maps/real_map.txt'))
 
     # Точки
     start = (1, 1)

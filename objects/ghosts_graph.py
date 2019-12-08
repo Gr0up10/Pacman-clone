@@ -60,7 +60,7 @@ class Graph:
     def check_tile(self, x, y):
         map_obj = self.field.map
         if not map_obj[y][x].state:
-            return None
+            return -1
         if Meta.ghost_turn in map_obj[y][x].meta:
             return x, y
 
@@ -69,22 +69,31 @@ class Graph:
         width = len(map_obj[0])
         height = len(map_obj)
         res = [None for _ in range(4)]
+        can_go = [True for _ in range(4)]
         for i in range(1, max(width, height)):
-            if x + i < width and not res[0]:
+            if x + i < width and not res[0] and can_go[0]:
                 tile = self.check_tile(x + i, y)
-                if tile:
+                if tile == -1:
+                    can_go[0] = False
+                elif tile:
                     res[0] = tile + (i,)
-            if x - i >= 0 and not res[1]:
+            if x - i >= 0 and not res[1] and can_go[1]:
                 tile = self.check_tile(x - i, y)
-                if tile:
+                if tile == -1:
+                    can_go[1] = False
+                elif tile:
                     res[1] = tile + (i,)
-            if y + i < height and not res[2]:
+            if y + i < height and not res[2] and can_go[2]:
                 tile = self.check_tile(x, y + i)
-                if tile:
+                if tile == -1:
+                    can_go[2] = False
+                elif tile:
                     res[2] = tile + (i,)
-            if y - i >= 0 and not res[3]:
+            if y - i >= 0 and not res[3] and can_go[3]:
                 tile = self.check_tile(x, y - i)
-                if tile:
+                if tile == -1:
+                    can_go[3] = False
+                elif tile:
                     res[3] = tile + (i,)
         return res
 
@@ -110,7 +119,7 @@ class Graph:
 def main():
     # Тестовый запуск: генерирует граф, отрисовыввает его в консоли и выдает соседи 1 точки
     game = pygame.init()
-    g = Graph(Field(game, 32))
+    g = Graph(Field(game, 32, '../assets/maps/real_map.txt'))
     g.generate()
     a = g.get_vert_by_coord(23, 20)
     print('All verts:')

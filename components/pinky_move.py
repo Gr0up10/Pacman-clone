@@ -21,12 +21,13 @@ class PinkyMoveComponent(Component):
         trans = self.entity.get_component(TransformComponent)
         if not trans:
             return
-
         if self.path is not None and self.current_vert is not None:
-            if self.path[self.current_vert].vector == trans.pos or self.direction is None:
+            if self.path[self.current_vert] == trans.pos or self.direction is None:
                 self.current_vert += 1
-                print([(v.x, v.y) for v in self.path])
-                self.update_direction(trans.pos, self.path[self.current_vert].vector)
+                if self.current_vert >= len(self.path):
+                    self.path = None
+                    return
+                self.update_direction(trans.pos, self.path[self.current_vert])
 
             trans.position += self.direction * self.speed
 
@@ -42,6 +43,7 @@ class PinkyMoveComponent(Component):
         trans = self.entity.get_component(TransformComponent)
         self.path = self.path_finder.find_path(trans.pos, new_pos)
         self.current_vert = 0
+        self.update_direction(trans.pos, self.path[self.current_vert])
 
     def removed(self):
         self.entity.event_manager.unbind(UpdateEvent, self.update)
