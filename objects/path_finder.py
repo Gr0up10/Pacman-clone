@@ -83,6 +83,7 @@ class Afinder:
                 cur_vec = self.vert2vec(current)
                 next_vec = self.vert2vec(ncurrent)
                 if cur_vec.distance_to(start_coord) < cur_vec.distance_to(next_vec):
+                    print("choose")
                     break
 
             path.append(self.vert2vec(ncurrent))

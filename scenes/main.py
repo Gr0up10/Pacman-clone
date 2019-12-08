@@ -16,6 +16,7 @@ from pysmile.renderers.tile_renderer import TileRenderer
 from pysmile.renderers.text import TextRenderer
 
 from components.ghost_collision import GhostCollision
+from components.line_handler import LineHandlerComponent
 from components.move_component import MoveComponent
 from components.music_player import MusicPlayerComponent
 from components.object_update import ObjectUpdate
@@ -25,6 +26,7 @@ from components.pacman_collisions import PacmanCollisions
 from objects.ghost_base import GhostBase
 
 from objects.ghost_move import  GhostMove
+from renderers.line_renderer import LineRenderer
 
 from scenes.base import Scene
 from objects.field import Field
@@ -92,6 +94,12 @@ class MainScene(Scene):
         pinky.add_component(TransformComponent(Vector2(32, 32)))
         pinky.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/pink.png"), (32, 32)))
         pinky.add_component(PinkyMoveComponent(self.field_obj, 2))
+
+        debug_line = Entity()
+        self.add_entity(debug_line)
+        debug_line.add_component(TransformComponent(Vector2(0, 0)))
+        debug_line.add_component(RendererComponent(LineRenderer(), (0, 0)))
+        debug_line.add_component(LineHandlerComponent())
 
         score_label = Entity()
         self.add_entity(score_label)
