@@ -23,6 +23,7 @@ from components.object_update import ObjectUpdate
 from components.ghost_move import GhostMoveComponent
 from components.score_increaser import ScoreIncreaserComponent
 from components.pacman_collisions import PacmanCollisions
+from events.debug_line import DrawDebugLineEvent
 from objects.ghost_base import GhostBase
 
 from objects.ghost_move import  GhostMove
@@ -164,16 +165,26 @@ class MainScene(Scene):
 
         pac_pos = pacman.get_component(TransformComponent).pos
         dir = pacman.get_component(MoveComponent).direction
-        cell_pos = Vector2(pac_pos.x // field.size, pac_pos.y // field.size)
+        start_pos = Vector2(pac_pos.x // field.size, pac_pos.y // field.size)
+        cell_pos = Vector2(start_pos.x, start_pos.y)
         c_dirs = [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]
+        print(cell_pos)
         for i in range(4):
             cell = field.get_cell_iter(*vec2tuple(cell_pos))
             next_cell = field.get_cell_iter(*vec2tuple(cell_pos + dir))
-            if (Meta.ghost_turn in cell.meta and not next_cell.state) or cell.state:
+            if (Meta.ghost_turn in cell.meta and not next_cell.state) or not cell.state:
                 for c_dir in c_dirs:
                     new_pos = cell_pos + c_dir
-                    if c_dir.x != -dir.x and c_dir.y != -dir.y and field.get_cell_iter(*vec2tuple(new_pos)).state:
+                    if start_pos != cell_pos + c_dir and (c_dir.x != -dir.x or c_dir.y != -dir.y) and field.get_cell_iter(*vec2tuple(new_pos)).state:
                         dir = c_dir
             cell_pos += dir
 
+        pacman.event_manager.trigger_event(DrawDebugLineEvent(
+            self.create_rect_path(cell_pos * field.size + Vector2(16, 16)),
+            color=Colors.green))
         return cell_pos * field.size
+
+    @staticmethod
+    def create_rect_path(pos, size=10):
+        offsets = [Vector2(size, size), Vector2(size, -size), Vector2(-size, -size), Vector2(-size, size), Vector2(size, size)]
+        return [pos + off for off in offsets]
