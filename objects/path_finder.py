@@ -82,7 +82,13 @@ class Afinder:
         # Начинаем путь с конца(настоящей точки, а не ближайшей из графа), создаём список с одним элементом
         path = [real_goal]
 
+        for v, m in came_from.items():
+            print(v, m)
+            if v and m:
+                print("{} {} -> {} {}".format(v.x, v.y, m.x, m.y))
+
         while current != start:
+            print(current.x, current.y)
             current = came_from[current]
             if out_vec:
                 path.append(self.vert2vec(current))
@@ -148,16 +154,16 @@ def main():
     aggr_finder = Afinder(Field(game, 32))
 
     # Точки
-    start= (0,0)
-    goal = (20,21)
-    goal2 = (10, 12)
+    start= (1,1)
+    goal = (23,20)
+    #goal2 = (10, 12)
     # Поиск пути
     path = finder.find_path(start, goal)
-    path2 = aggr_finder.find_path(start, goal2)
+    #path2 = aggr_finder.find_path(start, goal2)
 
     # Вывод в терминал(для проверки)
     print_path_on_map(finder, path)
-    print_path_on_map(aggr_finder, path2)
+    #print_path_on_map(aggr_finder, path2)
 
 
 if __name__ == '__main__':

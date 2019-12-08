@@ -33,14 +33,41 @@ class Vert:
         (x2, y2) = b.x, b.y
         return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2))
 
+def check_tile(map_obj, x, y):
+    if not map_obj[y][x].state:
+        return None
+    if Meta.ghost_turn in map_obj[y][x].meta:
+        return x, y
+
+def find_neighbours(map_obj, x, y):
+    width = len(map_obj[0])
+    height = len(map_obj)
+    res = [None for _ in range(4)]
+    for i in range(1, max(width, height)):
+        if x + i < width and not res[0]:
+            tile = check_tile(map_obj, x + i, y)
+            if tile:
+                res[0] = tile + (i,)
+        if x - i >= 0 and not res[1]:
+            tile = check_tile(map_obj, x - i, y)
+            if tile:
+                res[1] = tile + (i,)
+        if y + i < height and not res[2]:
+            tile = check_tile(map_obj, x, y + i)
+            if tile:
+                res[2] = tile + (i,)
+        if y -i >= 0 and not res[3]:
+            tile = check_tile(map_obj, x, y - i)
+            if tile:
+                res[3] = tile + (i,)
+    return res
 
 class Graph:
     def __init__(self, field):
         self.field = field
         self.verts = []
-        self.width = len(self.field.matrix[len(self.field.matrix)-1])
+        self.width = len(self.field.matrix[len(self.field.matrix) - 1])
         self.height = len(self.field.matrix)
-        pass
 
     def generate(self):
         for y in range(0, self.height):
@@ -49,11 +76,11 @@ class Graph:
                     self.verts.append(Vert(x, y))
 
         for vert in self.verts:
-            neighbours = [self.check_for_horizontal_neighbours(self.field.map, vert.x, vert.y, self.width, 1),
-                          self.check_for_horizontal_neighbours(self.field.map, vert.x, vert.y, self.width, -1),
-                          self.check_for_vertical_neighbours(self.field.map, vert.x, vert.y, self.height, 1),
-                          self.check_for_vertical_neighbours(self.field.map, vert.x, vert.y, self.height, -1)]
-
+            #neighbours = [check_for_horizontal_neighbours(self.field.map, vert.x, vert.y, self.width, 1),
+            #              check_for_horizontal_neighbours(self.field.map, vert.x, vert.y, self.width, -1),
+            #              check_for_vertical_neighbours(self.field.map, vert.x, vert.y, self.height, 1),
+            #              check_for_vertical_neighbours(self.field.map, vert.x, vert.y, self.height, -1)]
+            neighbours = find_neighbours(self.field.map, vert.x, vert.y)
             for i in neighbours:
                 if i is not None:
                     for v in self.verts:
@@ -79,27 +106,6 @@ class Graph:
         y = vert.y
         return self.get_vert_by_coord(x, y)
 
-    @staticmethod
-    def check_for_horizontal_neighbours(map_obj, x, y, width, direction):
-        dist = 0
-        for xx in range(x + direction, width if direction > 0 else 0, direction):
-            dist += 1
-            if not map_obj[y][xx].state:
-                return None
-            if Meta.ghost_turn in map_obj[y][xx].meta:
-                return xx, y, dist
-
-    @staticmethod
-    def check_for_vertical_neighbours(map_obj, x, y, height, direction):
-        dist = 0
-        for yy in range(y + direction, height if direction > 0 else 0, direction):
-            dist += 1
-            if not map_obj[yy][x].state:
-                return None
-            if Meta.ghost_turn in map_obj[yy][x].meta:
-                return x, yy, dist
-
-
 # Заменить в field ../ на ./
 def main():
     # Тестовый запуск: генерирует граф, отрисовыввает его в консоли и выдает соседи 1 точки
@@ -117,8 +123,12 @@ def main():
 
     for i in range(0, g.height):
         for j in range(0, g.width):
-            if g.is_vert(j, i):
+            if a.x == j and a.y == i:
+                print("1", end="")
+            elif g.is_vert(j, i):
                 print("0", end="")
+            elif not g.field.get_cell_iter(j, i).state:
+                print("#", end="")
             else:
                 print("-", end="")
         print("\n", end="")
