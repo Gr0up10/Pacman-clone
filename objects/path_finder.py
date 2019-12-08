@@ -140,11 +140,10 @@ def print_path_on_map(finder, path):
 # Пример использования
 def main():
 
-    game = pygame.init()
     # Инициализируем поисковик
-    finder = Afinder(Field(game, 32, '../assets/maps/real_map.txt'))
+    finder = Afinder(Field(None, 32, '../assets/maps/real_map.txt'))
     # Можно использовать несколько поисковиков
-    aggr_finder = Afinder(Field(game, 32, '../assets/maps/real_map.txt'))
+    aggr_finder = Afinder(Field(None, 32, '../assets/maps/real_map.txt'))
 
     # Точки
     start = (1, 1)

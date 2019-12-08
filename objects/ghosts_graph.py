@@ -118,8 +118,7 @@ class Graph:
 # Заменить в field ../ на ./
 def main():
     # Тестовый запуск: генерирует граф, отрисовыввает его в консоли и выдает соседи 1 точки
-    game = pygame.init()
-    g = Graph(Field(game, 32, '../assets/maps/real_map.txt'))
+    g = Graph(Field(None, 32, '../assets/maps/real_map.txt'))
     g.generate()
     a = g.get_vert_by_coord(23, 20)
     print('All verts:')
