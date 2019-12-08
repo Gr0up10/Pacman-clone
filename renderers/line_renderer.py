@@ -5,16 +5,16 @@ from OpenGL.GL import *
 class LineRenderer(Renderer):
     def __init__(self):
         super().__init__()
-        self.line = None
+        self.lines = []
 
     def render(self, entity, rect):
-        if self.line and len(self.line) >= 2:
-            glPushMatrix()
-            glBegin(GL_LINES)
-            glColor3f(1.0, 0.0, 0.0)
-            for i in range(len(self.line)-1):
-                glVertex2f(self.line[i].x, self.line[i].y)
-                glVertex2f(self.line[i+1].x, self.line[i+1].y)
+        glPushMatrix()
+        glBegin(GL_LINES)
+        for line in self.lines:
+            glColor3f(*line[1][:3])
+            for i in range(len(line[0])-1):
+                glVertex2f(line[0][i].x,   line[0][i].y)
+                glVertex2f(line[0][i+1].x, line[0][i+1].y)
 
-            glEnd()
-            glPopMatrix()
+        glEnd()
+        glPopMatrix()
