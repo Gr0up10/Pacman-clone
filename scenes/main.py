@@ -88,14 +88,14 @@ class MainScene(Scene):
         pinky.add_component(TransformComponent(Vector2(32, 32)))
         pinky.add_component(BoxCollider((32, 32)))
         pinky.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/pink.png"), (32, 32)))
-        pinky.add_component(GhostMoveComponent(self.field_obj, 2, self.pinky_find_target))
+        pinky.add_component(GhostMoveComponent(self.field_obj, 2, self.pinky_find_target, Colors.pink))
 
         red = Entity()
         self.add_entity(red)
         red.add_component(TransformComponent(Vector2(256, 32)))
         red.add_component(BoxCollider((32, 32)))
         red.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/red.png"), (32, 32)))
-        red.add_component(GhostMoveComponent(self.field_obj, 2, self.red_find_target))
+        red.add_component(GhostMoveComponent(self.field_obj, 2, self.red_find_target, Colors.red))
 
         debug_line = Entity()
         self.add_entity(debug_line)
