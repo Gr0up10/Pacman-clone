@@ -154,8 +154,8 @@ def main():
     aggr_finder = Afinder(Field(game, 32))
 
     # Точки
-    start= (1,1)
-    goal = (23,20)
+    start = (1, 1)
+    goal = (23, 20)
     #goal2 = (10, 12)
     # Поиск пути
     path = finder.find_path(start, goal)
