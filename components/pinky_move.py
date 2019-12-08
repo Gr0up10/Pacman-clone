@@ -66,7 +66,7 @@ class PinkyMoveComponent(Component):
         self.path = self.path_finder.find_path(trans.pos, target_pos)
         self.current_vert = 0
         self.update_direction(trans.pos, self.path[self.current_vert])
-        self.entity.event_manager.trigger_event(DrawDebugLineEvent([v + Vector2(16, 16) for v in self.path]))
+        self.entity.event_manager.trigger_event(DrawDebugLineEvent([v + Vector2(16, 16) for v in self.path + [target_pos]]))
 
     def removed(self):
         self.entity.event_manager.unbind(UpdateEvent, self.update)

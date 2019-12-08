@@ -18,7 +18,8 @@ class GhostCollision(Component):
         collider = col.get_collider()[0]
 
         for ghost in self.ghosts:
-            if collider.colliderect(ghost.rect):
+            ghost_col = ghost.get_component(Collider).get_collider()[0]
+            if collider.colliderect(ghost_col):
                 self.entity.event_manager.trigger_event(GameOverEvent())
                 self.entity.remove_component(GhostCollision)
                 return

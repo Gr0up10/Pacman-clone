@@ -86,12 +86,14 @@ class MainScene(Scene):
         ghost = Entity()
         self.add_entity(ghost)
         ghost.add_component(TransformComponent(Vector2(0, 0)))
+        ghost.add_component(BoxCollider((32, 32)))
         ghost.add_component(PyGameRendererComponent(ObjectRenderer(self.ghost_obj), self.game.screen_size))
         ghost.add_component(ObjectUpdate(self.ghost_obj))
 
         pinky = Entity()
         self.add_entity(pinky)
         pinky.add_component(TransformComponent(Vector2(32, 32)))
+        pinky.add_component(BoxCollider((32, 32)))
         pinky.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/pink.png"), (32, 32)))
         pinky.add_component(PinkyMoveComponent(self.field_obj, 2))
 
@@ -151,4 +153,4 @@ class MainScene(Scene):
         player.add_component(BoxCollider((32, 32)))
         player.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts, animation_speed=0.3), (32, 32)))
         player.add_component(GrainCollisions())
-        player.add_component(GhostCollision([self.ghost_obj]))
+        player.add_component(GhostCollision([ghost, pinky]))
