@@ -175,7 +175,8 @@ class MainScene(Scene):
             if (Meta.ghost_turn in cell.meta and not next_cell.state) or not cell.state:
                 for c_dir in c_dirs:
                     new_pos = cell_pos + c_dir
-                    if start_pos != cell_pos + c_dir and (c_dir.x != -dir.x or c_dir.y != -dir.y) and field.get_cell_iter(*vec2tuple(new_pos)).state:
+                    if start_pos != cell_pos + c_dir and (c_dir.x != -dir.x or c_dir.y != -dir.y) \
+                            and field.get_cell_iter(*vec2tuple(new_pos)).state:
                         dir = c_dir
             cell_pos += dir
 
@@ -186,5 +187,9 @@ class MainScene(Scene):
 
     @staticmethod
     def create_rect_path(pos, size=10):
-        offsets = [Vector2(size, size), Vector2(size, -size), Vector2(-size, -size), Vector2(-size, size), Vector2(size, size)]
+        offsets = [Vector2(size, size),
+                   Vector2(size, -size),
+                   Vector2(-size, -size),
+                   Vector2(-size, size),
+                   Vector2(size, size)]
         return [pos + off for off in offsets]
