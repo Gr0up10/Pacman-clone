@@ -20,7 +20,7 @@ from components.line_handler import LineHandlerComponent
 from components.move_component import MoveComponent
 from components.music_player import MusicPlayerComponent
 from components.object_update import ObjectUpdate
-from components.pinky_move import PinkyMoveComponent
+from components.ghost_move import GhostMoveComponent
 from components.score_increaser import ScoreIncreaserComponent
 from components.pacman_collisions import PacmanCollisions
 from objects.ghost_base import GhostBase
@@ -83,19 +83,19 @@ class MainScene(Scene):
             self.game_over.max_grains_count += 1
             self.add_grain(g.rect, big_grain_size, True)
 
-        ghost = Entity()
-        self.add_entity(ghost)
-        ghost.add_component(TransformComponent(Vector2(0, 0)))
-        ghost.add_component(BoxCollider((32, 32)))
-        ghost.add_component(PyGameRendererComponent(ObjectRenderer(self.ghost_obj), self.game.screen_size))
-        ghost.add_component(ObjectUpdate(self.ghost_obj))
-
         pinky = Entity()
         self.add_entity(pinky)
         pinky.add_component(TransformComponent(Vector2(32, 32)))
         pinky.add_component(BoxCollider((32, 32)))
         pinky.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/pink.png"), (32, 32)))
-        pinky.add_component(PinkyMoveComponent(self.field_obj, 2))
+        pinky.add_component(GhostMoveComponent(self.field_obj, 2, self.pinky_find_target))
+
+        red = Entity()
+        self.add_entity(red)
+        red.add_component(TransformComponent(Vector2(256, 32)))
+        red.add_component(BoxCollider((32, 32)))
+        red.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/red.png"), (32, 32)))
+        red.add_component(GhostMoveComponent(self.field_obj, 2, self.red_find_target))
 
         debug_line = Entity()
         self.add_entity(debug_line)
@@ -153,4 +153,27 @@ class MainScene(Scene):
         player.add_component(BoxCollider((32, 32)))
         player.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts, animation_speed=0.3), (32, 32)))
         player.add_component(GrainCollisions())
-        player.add_component(GhostCollision([ghost, pinky]))
+        player.add_component(GhostCollision([red, pinky]))
+
+    def red_find_target(self, pacman, field):
+        return pacman.get_component(TransformComponent).pos
+
+    def pinky_find_target(self, pacman, field):
+        def vec2tuple(vec):
+            return int(vec.x), int(vec.y)
+
+        pac_pos = pacman.get_component(TransformComponent).pos
+        dir = pacman.get_component(MoveComponent).direction
+        cell_pos = Vector2(pac_pos.x // field.size, pac_pos.y // field.size)
+        c_dirs = [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]
+        for i in range(4):
+            cell = field.get_cell_iter(*vec2tuple(cell_pos))
+            next_cell = field.get_cell_iter(*vec2tuple(cell_pos + dir))
+            if (Meta.ghost_turn in cell.meta and not next_cell.state) or cell.state:
+                for c_dir in c_dirs:
+                    new_pos = cell_pos + c_dir
+                    if c_dir.x != -dir.x and c_dir.y != -dir.y and field.get_cell_iter(*vec2tuple(new_pos)).state:
+                        dir = c_dir
+            cell_pos += dir
+
+        return cell_pos * field.size
