@@ -1,9 +1,12 @@
 import pygame
 import collections
-from math import sqrt
-from ghosts_graph import Graph, Vert
+from objects.ghosts_graph import Graph, Vert
+
 
 # Класс представляет собой "обёртку" для стокового deque. Работает как "Первый вошёл, первый вышел"
+from objects.field import Field
+
+
 class Queue:
     def __init__(self):
         self.elements = collections.deque()
@@ -20,18 +23,24 @@ class Queue:
 
 # Основной класс, который обрабатывает поиск по карте
 class Afinder:
-    def __init__(self, game):
+    def __init__(self, field):
         # Посещённые вершины
         self.frontier = Queue()
         # Создать граф
-        self.graph = Graph(game=game)
+        self.graph = Graph(field)
         self.graph.generate()
 
-    # Основная функция, для поиска пути использовать её. start/end_coord - кортежи координат (x,y)
-    def find_path(self, start_coord , goal_coord):
+    def vec2vert(self, vec):
+        size = self.graph.field.size
+        return Vert(vec.x // size, vec.y // size)
 
-        real_start = Vert(*start_coord)
-        real_goal = Vert(*goal_coord)
+    def vert2vec(self, vert):
+        return vert.vector*self.graph.field.size
+
+    # Основная функция, для поиска пути использовать её. start/end_coord - кортежи координат (x,y)
+    def find_path(self, start_coord, goal_coord):
+        real_start = self.vec2vert(start_coord)
+        real_goal = self.vec2vert(goal_coord)
 
         # Ближайшие вершины из нашего графа
         start = self.find_closest_vert(real_start)
@@ -58,28 +67,29 @@ class Afinder:
                     came_from[next[0]] = current
 
         # Создание пути по "проходу"
-        path = self.create_route(came_from, goal, start, real_start, real_goal)
+        path = self.create_route(came_from, goal, start, start_coord, real_goal)
         return path
 
     # Создаём путь от обратного(от goal до start) и разворачиваем его
-    def create_route(self, came_from, goal, start, real_start, real_goal):
+    def create_route(self, came_from, goal, start, start_coord, real_goal):
         current = goal
 
         # Начинаем путь с конца(настоящей точки, а не ближайшей из графа), создаём список с одним элементом
-        path = [real_goal]
-
-        for v, m in came_from.items():
-            print(v, m)
-            if v and m:
-                print("{} {} -> {} {}".format(v.x, v.y, m.x, m.y))
-
+        path = [self.vert2vec(real_goal)]
         while current != start:
-            print(current.x, current.y)
-            current = came_from[current]
-            path.append(current)
+            ncurrent = came_from[current]
+            # Если реальный старт ближе к следующей вершине то выбираем его
+            if ncurrent == start:
+                cur_vec = self.vert2vec(current)
+                next_vec = self.vert2vec(ncurrent)
+                if cur_vec.distance_to(start_coord) < cur_vec.distance_to(next_vec):
+                    break
+
+            path.append(self.vert2vec(ncurrent))
+            current = ncurrent
 
         # Добавляем настоящую стартовую позицию
-        path.append(real_start)
+        #path.append(real_start)
 
         # Разворачиваем, чтобы начинать со real_start
         path.reverse()
@@ -93,22 +103,20 @@ class Afinder:
         closest_vert = None
 
         for vert in self.graph.verts:
-            if heuristic(point, vert) < min_len:
-                min_len = heuristic(point, vert)
+            if point.distance(vert) < min_len:
+                min_len = point.distance(vert)
                 closest_vert = vert
 
         return closest_vert
 
-# Функция возвращает растояние между двумя Vert()
-def heuristic( a, b):
-    (x1, y1) = a.x, a.y
-    (x2, y2) = b.x, b.y
-    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2))
+
 # Функция выводит путь по координатам
 def print_path(path):
     for i in path:
         print("({}, {})".format(i.x, i.y))
     print('')
+
+
 # Функция рисует путь на "карте"
 def print_path_on_map(finder, path):
     graph = finder.graph
@@ -134,13 +142,13 @@ def main():
 
     game = pygame.init()
     # Инициализируем поисковик
-    finder = Afinder(game)
+    finder = Afinder(Field(game, 32, '../assets/maps/real_map.txt'))
     # Можно использовать несколько поисковиков
-    aggr_finder = Afinder(game)
+    aggr_finder = Afinder(Field(game, 32, '../assets/maps/real_map.txt'))
 
     # Точки
-    start= (1,1)
-    goal = (23,20)
+    start = (1, 1)
+    goal = (23, 20)
     #goal2 = (10, 12)
     # Поиск пути
     path = finder.find_path(start, goal)
@@ -149,6 +157,7 @@ def main():
     # Вывод в терминал(для проверки)
     print_path_on_map(finder, path)
     #print_path_on_map(aggr_finder, path2)
+
 
 if __name__ == '__main__':
     main()

@@ -16,14 +16,17 @@ from pysmile.renderers.tile_renderer import TileRenderer
 from pysmile.renderers.text import TextRenderer
 
 from components.ghost_collision import GhostCollision
+from components.line_handler import LineHandlerComponent
 from components.move_component import MoveComponent
 from components.music_player import MusicPlayerComponent
 from components.object_update import ObjectUpdate
+from components.pinky_move import PinkyMoveComponent
 from components.score_increaser import ScoreIncreaserComponent
 from components.pacman_collisions import PacmanCollisions
 from objects.ghost_base import GhostBase
 
 from objects.ghost_move import  GhostMove
+from renderers.line_renderer import LineRenderer
 
 from scenes.base import Scene
 from objects.field import Field
@@ -83,8 +86,22 @@ class MainScene(Scene):
         ghost = Entity()
         self.add_entity(ghost)
         ghost.add_component(TransformComponent(Vector2(0, 0)))
+        ghost.add_component(BoxCollider((32, 32)))
         ghost.add_component(PyGameRendererComponent(ObjectRenderer(self.ghost_obj), self.game.screen_size))
         ghost.add_component(ObjectUpdate(self.ghost_obj))
+
+        pinky = Entity()
+        self.add_entity(pinky)
+        pinky.add_component(TransformComponent(Vector2(32, 32)))
+        pinky.add_component(BoxCollider((32, 32)))
+        pinky.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/pink.png"), (32, 32)))
+        pinky.add_component(PinkyMoveComponent(self.field_obj, 2))
+
+        debug_line = Entity()
+        self.add_entity(debug_line)
+        debug_line.add_component(TransformComponent(Vector2(0, 0)))
+        debug_line.add_component(RendererComponent(LineRenderer(), (0, 0)))
+        debug_line.add_component(LineHandlerComponent())
 
         score_label = Entity()
         self.add_entity(score_label)
@@ -136,4 +153,4 @@ class MainScene(Scene):
         player.add_component(BoxCollider((32, 32)))
         player.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts, animation_speed=0.3), (32, 32)))
         player.add_component(GrainCollisions())
-        player.add_component(GhostCollision([self.ghost_obj]))
+        player.add_component(GhostCollision([ghost, pinky]))
