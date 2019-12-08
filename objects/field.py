@@ -65,6 +65,8 @@ class Field(DrawObject):
                          ((0, -1), (-1, 0))]
         for row in range(len(self.map)):
             for col in range(len(self.map[row])):
+                if not self.get_cell_iter(col, row).state:
+                    continue
                 for pat in turn_patterns:
                     accepted = True
                     for dir in pat:
