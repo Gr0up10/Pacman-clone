@@ -14,7 +14,6 @@ class ScoreBoard:
             scores = list(map(int, raw_data[1].split(' ')))
 
         except FileNotFoundError:
-            os.mkdir("data/")
             data_file = open("data/data.score", "w+")
             initials = ["---"] * 10
             scores = [0] * 10
