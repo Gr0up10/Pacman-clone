@@ -115,12 +115,11 @@ class Graph:
         return self.get_vert_by_coord(x, y)
 
 
-# Заменить в field ../ на ./
 def main():
     # Тестовый запуск: генерирует граф, отрисовыввает его в консоли и выдает соседи 1 точки
     g = Graph(Field(None, 32, '../assets/maps/real_map.txt'))
     g.generate()
-    a = g.get_vert_by_coord(6, 10)
+    a = g.get_vert_by_coord(11, 1)
 
     print('All verts:')
     for i in g.verts:
