@@ -84,19 +84,21 @@ class MainScene(Scene):
             self.game_over.max_grains_count += 1
             self.add_grain(g.rect, big_grain_size, True)
 
+        player = Entity()
+
         pinky = Entity()
         self.add_entity(pinky)
         pinky.add_component(TransformComponent(Vector2(32, 32)))
         pinky.add_component(BoxCollider((32, 32)))
         pinky.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/pink.png"), (32, 32)))
-        pinky.add_component(GhostMoveComponent(self.field_obj, 2, self.pinky_find_target, Colors.pink))
+        pinky.add_component(GhostMoveComponent(self.field_obj, 2, self.pinky_find_target, player, Colors.pink))
 
         red = Entity()
         self.add_entity(red)
-        red.add_component(TransformComponent(Vector2(256, 32)))
+        red.add_component(TransformComponent(Vector2(32, 32)))
         red.add_component(BoxCollider((32, 32)))
         red.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/red.png"), (32, 32)))
-        red.add_component(GhostMoveComponent(self.field_obj, 2, self.red_find_target, Colors.red))
+        red.add_component(GhostMoveComponent(self.field_obj, 2, self.red_find_target, player, Colors.red))
 
         debug_line = Entity()
         self.add_entity(debug_line)
@@ -140,7 +142,6 @@ class MainScene(Scene):
                 TransformComponent(Vector2(self.game.width - 200 + 34 * i, self.game.height - 100)))
             pacman_live.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts, animate=False), (32, 32)))
 
-        player = Entity()
         self.add_entity(player)
 
         key_bindings = [[pygame.K_a], [pygame.K_d], [pygame.K_w], [pygame.K_s]]
@@ -156,34 +157,38 @@ class MainScene(Scene):
         player.add_component(GrainCollisions())
         player.add_component(GhostCollision([red, pinky]))
 
-    def red_find_target(self, pacman, field):
+    def red_find_target(self, pacman, field, pos):
         return pacman.get_component(TransformComponent).pos
 
-    def pinky_find_target(self, pacman, field):
+    def pinky_find_target(self, pacman, field, pos):
         def vec2tuple(vec):
             return int(vec.x), int(vec.y)
 
         pac_pos = pacman.get_component(TransformComponent).pos
         dir = pacman.get_component(MoveComponent).direction
+        pdir = Vector2(dir.x, dir.y)
         start_pos = Vector2(pac_pos.x // field.size, pac_pos.y // field.size)
         cell_pos = Vector2(start_pos.x, start_pos.y)
         c_dirs = [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]
-        print(cell_pos)
         for i in range(4):
             cell = field.get_cell_iter(*vec2tuple(cell_pos))
             next_cell = field.get_cell_iter(*vec2tuple(cell_pos + dir))
             if (Meta.ghost_turn in cell.meta and not next_cell.state) or not cell.state:
                 for c_dir in c_dirs:
                     new_pos = cell_pos + c_dir
-                    if start_pos != cell_pos + c_dir and (c_dir.x != -dir.x or c_dir.y != -dir.y) \
+                    if start_pos != cell_pos + c_dir and (c_dir.x != -pdir.x or c_dir.y != -pdir.y) \
                             and field.get_cell_iter(*vec2tuple(new_pos)).state:
                         dir = c_dir
             cell_pos += dir
 
+        res_pos = cell_pos * field.size
+        if pac_pos.distance_to(pos) < res_pos.distance_to(pos) and pac_pos.distance_to(pos) < 128:
+            res_pos = pac_pos
+
         pacman.event_manager.trigger_event(DrawDebugLineEvent(
-            self.create_rect_path(cell_pos * field.size + Vector2(16, 16)),
+            self.create_rect_path(res_pos + Vector2(16, 16)),
             color=Colors.green))
-        return cell_pos * field.size
+        return res_pos
 
     @staticmethod
     def create_rect_path(pos, size=10):
