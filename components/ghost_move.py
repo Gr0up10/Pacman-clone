@@ -14,39 +14,34 @@ from objects.path_finder import Afinder
 
 
 class GhostMoveComponent(Component):
-    def __init__(self, field, speed, find_target, color=None):
+    def __init__(self, field, speed, find_target, pacman, color=None):
         super().__init__()
         self.field = field
         self.speed = speed
         self.entity = None
         self.direction = None
         self.path_finder = Afinder(field)
-        self.path = None
-        self.current_vert = None
+        self.target = None
         self.find_target = find_target
         if not color:
             self.debug_line_color = Colors.from_rgb(*[random.randint(0, 255) for _ in range(3)]).to_float()
         else:
             self.debug_line_color = color.to_float()
-        self.pacman = None
+        self.pacman = pacman
 
     def update(self, _):
         trans = self.entity.get_component(TransformComponent)
         if not trans:
             return
-        if self.path is not None and self.current_vert is not None:
-            if self.path[self.current_vert] == trans.pos or self.direction is None:
-                self.current_vert += 1
-                if self.current_vert >= len(self.path):
-                    self.path = None
-                    return
-                self.update_direction(trans.pos, self.path[self.current_vert])
-
+        if self.target:
+            if self.target == trans.pos:
+                self.update_target()
             if not self.field.get_cell(trans.pos + self.direction * self.speed).state:
                 self.update_target()
                 return
-
             trans.position += self.direction * self.speed
+        else:
+            self.update_target()
 
     def update_direction(self, pos, tpos):
         new_vec = tpos - pos
@@ -68,24 +63,16 @@ class GhostMoveComponent(Component):
         if not self.pacman:
             return
 
-        pac_pos = self.pacman.get_component(TransformComponent).pos
-        if Meta.ghost_turn not in self.field.get_cell(pac_pos).meta and self.path:
-            self.path[len(self.path)-1] = pac_pos
-            return
-
-        target_pos = self.find_target(self.pacman, self.field)
-
         trans = self.entity.get_component(TransformComponent)
-        self.path = self.path_finder.find_path(trans.pos, target_pos)
-        self.current_vert = 0
-        self.update_direction(trans.pos, self.path[self.current_vert])
-        self.draw_line(trans.pos)
+        target_pos = self.find_target(self.pacman, self.field, trans.pos)
+
+        self.target = self.path_finder.find_path(trans.pos, target_pos)
+        self.update_direction(trans.pos, self.target)
+        self.entity.event_manager.trigger_event(DrawDebugLineEvent([trans.pos, self.target], self.debug_line_color))
 
     def removed(self):
         self.entity.event_manager.unbind(UpdateEvent, self.update)
-        self.entity.event_manager.unbind(PacmanChangeTileEvent, self.pacman_move)
 
     def applied_on_entity(self, entity):
         self.entity = entity
         self.entity.event_manager.bind(UpdateEvent, self.update)
-        self.entity.event_manager.bind(PacmanChangeTileEvent, self.pacman_move)
