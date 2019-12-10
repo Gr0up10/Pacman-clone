@@ -120,7 +120,8 @@ def main():
     # Тестовый запуск: генерирует граф, отрисовыввает его в консоли и выдает соседи 1 точки
     g = Graph(Field(None, 32, '../assets/maps/real_map.txt'))
     g.generate()
-    a = g.get_vert_by_coord(23, 20)
+    a = g.get_vert_by_coord(6, 10)
+
     print('All verts:')
     for i in g.verts:
         print("({}, {})".format(i.x, i.y))
@@ -140,7 +141,6 @@ def main():
             else:
                 print("-", end="")
         print("\n", end="")
-
 
 if __name__ == '__main__':
     main()
