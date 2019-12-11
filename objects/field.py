@@ -1,8 +1,6 @@
 import pygame
 from objects.base import DrawObject
-from objects.base_cell import Wall
-from objects.base_cell import Floor
-from objects.base_cell import Meta
+from objects.base_cell import Wall, Floor, Meta, GhostDoor
 
 
 # Класс Поля, единственный на сцену, хранит Cell(Клетки)
@@ -41,8 +39,12 @@ class Field(DrawObject):
                 # Каждая новая клетка "смещается" от предыдущей на size
                 if self.matrix[row][col] == 'G':
                     self.map[row].append(Floor(self.game, *cell_pos, True, self.size))
+                if self.matrix[row][col] == 'D':
+                    self.map[row].append(GhostDoor(self.game, *cell_pos, True, self.size, meta=Meta.ghost_turn))
                 if self.matrix[row][col] == 'P':
                     self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=Meta.pacman_spawn))
+                if self.matrix[row][col] == 'g':
+                    self.map[row].append(Floor(self.game, *cell_pos, True, self.size, meta=Meta.ghost_spawn))
                 elif self.matrix[row][col] == 'W':
                     self.map[row].append(Wall(self.game, *cell_pos, False, self.size))
                 elif self.matrix[row][col] == 'S':
@@ -70,7 +72,7 @@ class Field(DrawObject):
                 for pat in turn_patterns:
                     accepted = True
                     for dir in pat:
-                        if isinstance(self.get_cell_iter(col+dir[0], row+dir[1]), Wall):
+                        if not self.get_cell_iter(col+dir[0], row+dir[1]).state:
                             accepted = False
                             break
                     if accepted:
