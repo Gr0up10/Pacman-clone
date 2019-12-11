@@ -7,8 +7,11 @@ from objects.text import Text
 
 class HighscoreScene(Scene):
 
+    def __init__(self, game):
+        self.button_menu = Btn(game, (10, game.height - 50, 100, 40), Color.WHITE, 30, 'МЕНЮ', self.set_menu_scene)
+        super().__init__(game)
+
     def create_objects(self):
-        self.button_menu = Btn(self.game, (10, self.game.height - 50, 100, 40), Color.WHITE, 30, 'МЕНЮ', self.set_menu_scene)
         self.objects = []
         self.objects.append(self.button_menu)
 

@@ -26,7 +26,7 @@ from components.pacman_collisions import PacmanCollisions
 from events.debug_line import DrawDebugLineEvent
 from objects.ghost_base import GhostBase
 
-from objects.ghost_move import  GhostMove
+from objects.ghost_move import GhostMove
 from renderers.line_renderer import LineRenderer
 
 from scenes.base import Scene
@@ -58,7 +58,8 @@ class MainScene(Scene):
         self.add_entity(field)
         shader = Shader.init_from_files("assets/shaders/walls/walls.vert", "assets/shaders/walls/walls.frag")
         field.add_component(TransformComponent(Vector2(0, 0)))
-        field.add_component(PyGameRendererComponent(ObjectRenderer(self.field_obj), self.game.screen_size, True, shader))
+        field.add_component(
+            PyGameRendererComponent(ObjectRenderer(self.field_obj), self.game.screen_size, True, shader))
 
     def add_grain(self, rect, size, big=False):
         grain = Entity()
@@ -86,16 +87,17 @@ class MainScene(Scene):
 
         player = Entity()
 
+        ghost_pos = self.field_obj.get_cells_by_type(Floor, Meta.ghost_spawn)
         pinky = Entity()
         self.add_entity(pinky)
-        pinky.add_component(TransformComponent(Vector2(32, 32)))
+        pinky.add_component(TransformComponent(Vector2(*ghost_pos[0].rect.xy)))
         pinky.add_component(BoxCollider((32, 32)))
         pinky.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/pink.png"), (32, 32)))
         pinky.add_component(GhostMoveComponent(self.field_obj, 2, self.pinky_find_target, player, Colors.pink))
 
         red = Entity()
         self.add_entity(red)
-        red.add_component(TransformComponent(Vector2(32, 32)))
+        red.add_component(TransformComponent(Vector2(*ghost_pos[1].rect.xy)))
         red.add_component(BoxCollider((32, 32)))
         red.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/red.png"), (32, 32)))
         red.add_component(GhostMoveComponent(self.field_obj, 2, self.red_find_target, player, Colors.red))
@@ -130,7 +132,8 @@ class MainScene(Scene):
         self.add_entity(high_score)
         high_score.add_component(TransformComponent(Vector2(self.game.width - 200, 70)))
         high_score.add_component(PyGameRendererComponent(
-            TextRenderer(str(high_score_num), font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"), (0, 0)))
+            TextRenderer(str(high_score_num), font_size=18, color=Colors.white, font="assets/fonts/Emulogic.ttf"),
+            (0, 0)))
 
         ts = TileSet()
         ts.load("./assets/tilesets/pacman_tiles.png", "./assets/tilesets/pacman.info")
@@ -157,7 +160,8 @@ class MainScene(Scene):
         player.add_component(GrainCollisions())
         player.add_component(GhostCollision([red, pinky]))
 
-    def red_find_target(self, pacman, field, pos):
+    @staticmethod
+    def red_find_target(pacman, field, pos):
         return pacman.get_component(TransformComponent).pos
 
     def pinky_find_target(self, pacman, field, pos):

@@ -52,7 +52,8 @@ class GameOverComponent(Component):
         shader.inject_rect = False
         shader.uniform_alpha = 1.0
         black_back.add_component(RendererComponent(RectRenderer(Colors.black), self.entity.screen_size, shader))
-        black_back.add_component(AnimationComponent(step=3, end=100, function=lambda x: shader.set_uniform("alpha", x/100.0)))
+        black_back.add_component(AnimationComponent(step=3, end=100,
+                                                    function=lambda x: shader.set_uniform("alpha", x/100.0)))
 
         game_text = Entity()
         scene.add_entity(game_text)
