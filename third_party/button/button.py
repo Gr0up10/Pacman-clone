@@ -90,4 +90,5 @@ class Button(object):
         surface.fill(color, self.rect.inflate(-4, -4))
         if self.text:
             text_rect = text.get_rect(center=self.rect.center)
+            text_rect.y-=5
             surface.blit(text, text_rect)
