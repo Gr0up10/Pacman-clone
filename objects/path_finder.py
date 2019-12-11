@@ -29,6 +29,7 @@ class Afinder:
         self.graph.generate()
         #Сохранить поле
         self.field = field
+        self.last_pos = None
 
     def vec2vert(self, vec):
         size = self.graph.field.size
@@ -46,16 +47,15 @@ class Afinder:
         goal = self.vec2vert(goal_coord)
 
         start = self.graph.get_vert(start)
-
         goto = None
-        min_dist = 1000
-
+        min_dist = 10000
         for path in start.neighbours:
             path = path[0]
-            if path.distance(goal) < min_dist:
+            if path.distance(goal) <= min_dist and path != self.last_pos:
                 goto = path
                 min_dist = path.distance(goal)
 
+        self.last_pos = start
         goto = self.vert2vec(goto)
         return goto
 
