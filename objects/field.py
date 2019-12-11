@@ -12,7 +12,7 @@ class Field(DrawObject):
     background_path = './assets/images/background.png'
 
     # size - размер клетки, аргумент для создания клеток
-    def __init__(self, game, size):
+    def __init__(self, game, size, map='./assets/maps/real_map.txt'):
         super().__init__(game)
         self.game = game
         self.size = size
@@ -24,7 +24,7 @@ class Field(DrawObject):
         self.map = []
 
         # Приведение текстовой карты к двумерному массиву
-        with open('./assets/maps/real_map.txt', 'r') as file:
+        with open(map, 'r') as file:
             lines = file.readlines()
             for row in lines:
                 row = list(row)
@@ -65,6 +65,8 @@ class Field(DrawObject):
                          ((0, -1), (-1, 0))]
         for row in range(len(self.map)):
             for col in range(len(self.map[row])):
+                if not self.get_cell_iter(col, row).state:
+                    continue
                 for pat in turn_patterns:
                     accepted = True
                     for dir in pat:
