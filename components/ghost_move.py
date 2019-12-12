@@ -33,7 +33,7 @@ class GhostMoveComponent(Component):
         trans = self.entity.get_component(TransformComponent)
         if not trans:
             return
-        if self.target:
+        if self.target and self.direction:
             if self.target == trans.pos:
                 self.update_target()
             if not self.field.get_cell(trans.pos + self.direction * self.speed).state:
