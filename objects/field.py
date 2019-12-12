@@ -87,7 +87,7 @@ class Field(DrawObject):
     # Функция, возвращающаяя клетку по строке и столбцу
     def get_cell_iter(self, col, row):
         # If col or row is out range return wall
-        if len(self.map) <= row or len(self.map[0]) <= col:
+        if len(self.map) <= row or len(self.map[0]) <= col or row < 0 or col < 0:
             return Wall(self.game, col * self.size, row * self.size, False, self.size)
         return self.map[row][col]
 

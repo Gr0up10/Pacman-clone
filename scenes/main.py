@@ -45,10 +45,10 @@ class MainScene(Scene):
         game.add_component(MusicPlayerComponent())
 
         self.scoreboard = ScoreBoard()
-        super().__init__(game)
-
         self.ghost_obj = None
         self.field_obj = None
+        self.pinky = None
+        super().__init__(game)
 
     def create_objects(self):
         self.field_obj = Field(self.game, 32)
@@ -88,12 +88,12 @@ class MainScene(Scene):
         player = Entity()
 
         ghost_pos = self.field_obj.get_cells_by_type(Floor, Meta.ghost_spawn)
-        pinky = Entity()
-        self.add_entity(pinky)
-        pinky.add_component(TransformComponent(Vector2(*ghost_pos[0].rect.xy)))
-        pinky.add_component(BoxCollider((32, 32)))
-        pinky.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/pink.png"), (32, 32)))
-        pinky.add_component(GhostMoveComponent(self.field_obj, 2, self.pinky_find_target, player, Colors.pink))
+        self.pinky = Entity()
+        self.add_entity(self.pinky)
+        self.pinky.add_component(TransformComponent(Vector2(*ghost_pos[0].rect.xy)))
+        self.pinky.add_component(BoxCollider((32, 32)))
+        self.pinky.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/pink.png"), (32, 32)))
+        self.pinky.add_component(GhostMoveComponent(self.field_obj, 2, self.pinky_find_target, player, Colors.pink))
 
         red = Entity()
         self.add_entity(red)
@@ -101,6 +101,13 @@ class MainScene(Scene):
         red.add_component(BoxCollider((32, 32)))
         red.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/red.png"), (32, 32)))
         red.add_component(GhostMoveComponent(self.field_obj, 2, self.red_find_target, player, Colors.red))
+
+        inky = Entity()
+        self.add_entity(inky)
+        inky.add_component(TransformComponent(Vector2(*ghost_pos[2].rect.xy)))
+        inky.add_component(BoxCollider((32, 32)))
+        inky.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/blue.png"), (32, 32)))
+        inky.add_component(GhostMoveComponent(self.field_obj, 2, self.inky_find_target, player, Colors.purple))
 
         debug_line = Entity()
         self.add_entity(debug_line)
@@ -158,32 +165,37 @@ class MainScene(Scene):
         player.add_component(BoxCollider((32, 32)))
         player.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts, animation_speed=0.3), (32, 32)))
         player.add_component(GrainCollisions())
-        player.add_component(GhostCollision([red, pinky]))
+        player.add_component(GhostCollision([red, self.pinky, inky]))
 
     @staticmethod
     def red_find_target(pacman, field, pos):
         return pacman.get_component(TransformComponent).pos
 
-    def pinky_find_target(self, pacman, field, pos):
-        def vec2tuple(vec):
-            return int(vec.x), int(vec.y)
+    @staticmethod
+    def vec2tuple(vec):
+        return int(vec.x), int(vec.y)
 
-        pac_pos = pacman.get_component(TransformComponent).pos
-        dir = pacman.get_component(MoveComponent).direction
+    def find_cell_ahead(self, pac_pos, dir, field, distance):
         pdir = Vector2(dir.x, dir.y)
         start_pos = Vector2(pac_pos.x // field.size, pac_pos.y // field.size)
         cell_pos = Vector2(start_pos.x, start_pos.y)
         c_dirs = [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]
-        for i in range(4):
-            cell = field.get_cell_iter(*vec2tuple(cell_pos))
-            next_cell = field.get_cell_iter(*vec2tuple(cell_pos + dir))
+        for i in range(distance):
+            cell = field.get_cell_iter(*self.vec2tuple(cell_pos))
+            next_cell = field.get_cell_iter(*self.vec2tuple(cell_pos + dir))
             if (Meta.ghost_turn in cell.meta and not next_cell.state) or not cell.state:
                 for c_dir in c_dirs:
                     new_pos = cell_pos + c_dir
                     if start_pos != cell_pos + c_dir and (c_dir.x != -pdir.x or c_dir.y != -pdir.y) \
-                            and field.get_cell_iter(*vec2tuple(new_pos)).state:
+                            and field.get_cell_iter(*self.vec2tuple(new_pos)).state:
                         dir = c_dir
             cell_pos += dir
+        return cell_pos
+
+    def pinky_find_target(self, pacman, field, pos):
+        pac_pos = pacman.get_component(TransformComponent).pos
+        dir = pacman.get_component(MoveComponent).direction
+        cell_pos = self.find_cell_ahead(pac_pos, dir, field, 4)
 
         res_pos = cell_pos * field.size
         if pac_pos.distance_to(pos) < res_pos.distance_to(pos) and pac_pos.distance_to(pos) < 128:
@@ -192,6 +204,36 @@ class MainScene(Scene):
         pacman.event_manager.trigger_event(DrawDebugLineEvent(
             self.create_rect_path(res_pos + Vector2(16, 16)),
             color=Colors.green))
+        return res_pos
+
+    def inky_find_target(self, pacman, field, pos):
+        pac_pos = pacman.get_component(TransformComponent).pos
+        dir = pacman.get_component(MoveComponent).direction
+        cell_pos = self.find_cell_ahead(pac_pos, dir, field, 2)*field.size
+        pinky_pos = self.pinky.get_component(TransformComponent).pos
+        rs = cell_pos*2 - pinky_pos
+        dst = cell_pos.distance_to(pinky_pos)
+        for i in range(int(dst//field.size//2)):
+            cell = field.get_cell(rs.lerp(cell_pos, 0.5+(i*field.size)/dst))
+            if cell.state:
+                rs = Vector2(*cell.rect.xy)
+                break
+            cell = field.get_cell(rs.lerp(cell_pos, 0.5-(i*field.size)/dst))
+            if cell.state:
+                rs = Vector2(*cell.rect.xy)
+                break
+
+        res_pos = rs
+        if not field.get_cell(res_pos).state:
+            res_pos = pac_pos
+
+        pacman.event_manager.trigger_event(DrawDebugLineEvent(
+            self.create_rect_path(res_pos + Vector2(16, 16)),
+            color=Colors.red))
+        pacman.event_manager.trigger_event(DrawDebugLineEvent(
+            self.create_rect_path(cell_pos + Vector2(16, 16)),
+            color=Colors.pink))
+        pacman.event_manager.trigger_event(DrawDebugLineEvent([res_pos, cell_pos, pinky_pos], color=Colors.blue))
         return res_pos
 
     @staticmethod
