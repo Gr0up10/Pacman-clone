@@ -1,5 +1,6 @@
 import pygame
 import collections
+import random
 
 from objects.base_cell import GhostDoor, Meta
 from objects.ghosts_graph import Graph, Vert
@@ -76,12 +77,38 @@ class Afinder:
                     return self.graph.get_vert_by_coord(cur.x, cur.y)
 
 
+
+class ScaryFinder(Afinder):
+    def find_path(self, start_coord):
+
+        start = self.vec2vert(start_coord)
+        start = self.graph.get_vert(start)
+        start = self.graph.get_vert(Vert(1,1))
+        if not start:
+            return self.vert2vec(self.find_closest_vert(start_coord))
+
+        goto = start
+
+        rand = random.randint(0, len(start.neighbours)-1)
+        path = start.neighbours[rand][0]
+        while path == self.last_pos:
+            rand = random.randint(0, len(start.neighbours) - 1)
+            path = start.neighbours[rand][0]
+
+        goto = path
+        self.last_pos = start
+        goto = self.vert2vec(goto)
+        return goto
+
+
+
 # Пример использования
 def main():
     # Инициализируем поисковик
     field = Field(None, 32, '../assets/maps/real_map.txt')
 
     finder = Afinder(field)
+    scary_finder = ScaryFinder(field)
     # Можно использовать несколько поисковиков
     _ = Afinder(field)
 
@@ -92,7 +119,8 @@ def main():
     goal[:] = 500, 500
 
     # Поиск пути
-    path = finder.find_path(start, goal)
+    # path = finder.find_path(start, goal)
+    path = scary_finder.find_path(start)
     print(path)
     """(8, 10)
        (6, 14)
