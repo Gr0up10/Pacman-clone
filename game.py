@@ -1,6 +1,6 @@
 import pygame
 from pysmile.game import Game as PSGame
-
+from scenes.menu import MenuScene
 from scenes.main import MainScene
 from scenes.base import Scene
 from pysmile.components.exit_on_escape import ExitOnEscape
@@ -18,7 +18,7 @@ class Game(PSGame):
 
         self.screen = None
         self.setup_default_components((width, height))
-        self.current_scene = MainScene
+        self.current_scene = MenuScene
         self.add_component(ExitOnEscape())
         self.settings = Settings()
 
