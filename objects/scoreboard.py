@@ -52,10 +52,10 @@ class ScoreBoard:
 
 
 def main():
-    SB = ScoreBoard()
+    sb = ScoreBoard()
 
-    SB.update_data("ABC", 100)
-    SB.update_data("KEK", 10)
+    sb.update_data("ABC", 100)
+    sb.update_data("KEK", 10)
 
 
 if __name__ == '__main__':

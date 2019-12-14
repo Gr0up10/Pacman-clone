@@ -10,9 +10,9 @@ class Meta(enum.Enum):
     ghost_turn = 2
     grain_small = 3
     grain_big = 4
-
     teleport1 = 5
     teleport2 = 6
+    ghost_spawn = 7
 
 
 # Класс Базовая клетка, при создании получает: x, y - координаты; state - стена или нет; size - размер клетки
@@ -38,6 +38,12 @@ class Cell(DrawObject):
 class Wall(Cell):
     def process_draw(self):
         pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 0)
+
+
+class GhostDoor(Cell):
+    def process_draw(self):
+        pygame.draw.rect(self.game.screen, (0, 0, 255), pygame.Rect(self.rect.x-self.size*0.2, self.rect.y,
+                                                                    self.rect.w+self.size*0.2, self.rect.h), 0)
 
 
 # Производный класс Пола, не отрисовывается

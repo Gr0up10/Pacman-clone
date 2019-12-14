@@ -19,12 +19,12 @@ class Grain(DrawObject):
         self.game.screen.blit(self.image, self.rect)
 
 
-class Big_grain(DrawObject):
+class BigGrain(DrawObject):
     filename = 'assets/images/big_grain.png'
 
     def __init__(self, game, x=200, y=100):
         super().__init__(game)
-        self.image = pygame.image.load(Big_grain.filename)
+        self.image = pygame.image.load(BigGrain.filename)
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.centery = y

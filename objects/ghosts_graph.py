@@ -22,7 +22,7 @@ class Vert:
                 return i
         return None
 
-    def equal(self,b):
+    def equal(self, b):
         if self.x == b.x and self.y == b.y:
             return True
         return False
@@ -115,18 +115,18 @@ class Graph:
         return self.get_vert_by_coord(x, y)
 
 
-# Заменить в field ../ на ./
 def main():
     # Тестовый запуск: генерирует граф, отрисовыввает его в консоли и выдает соседи 1 точки
     g = Graph(Field(None, 32, '../assets/maps/real_map.txt'))
     g.generate()
-    a = g.get_vert_by_coord(23, 20)
+    a = g.get_vert_by_coord(12, 10)
+
     print('All verts:')
     for i in g.verts:
         print("({}, {})".format(i.x, i.y))
 
     print('neighbours: ')
-    for i in a.neighbours :
+    for i in a.neighbours:
         print("({}, {})".format(i[0].x, i[0].y))
 
     for i in range(0, g.height):
