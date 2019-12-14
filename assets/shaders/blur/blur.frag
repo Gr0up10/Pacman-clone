@@ -19,5 +19,5 @@ vec4 blur13(sampler2D image, vec2 uv, vec2 resolution, vec2 direction) {
 }
 
 void main(){
-    gl_FragColor = blur13(texture, gl_TexCoord[0].st, rect.zw, vec2(-alpha,alpha));
+    gl_FragColor = blur13(texture, gl_TexCoord[0].st, rect.zw, vec2(-alpha/3.0,alpha/3.0));
 }
