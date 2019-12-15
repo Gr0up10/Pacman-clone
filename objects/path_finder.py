@@ -24,8 +24,7 @@ class Queue:
         return self.elements.popleft()
 
 
-# Основной класс, который обрабатывает поиск по карте
-class Afinder:
+class Finder:
     def __init__(self, field):
         # Создать граф
         self.graph = Graph(field)
@@ -34,18 +33,33 @@ class Afinder:
         self.field = field
         self.last_pos = None
 
+    """ Основная функция, для поиска пути использовать её.
+            start_coord = перекрёсток, на котором гост сейчас,
+            goal_coord  = позиция пакмена"""
+    def find_path(self, start_coord, goal_coord):
+        pass
+
     def vec2vert(self, vec):
         size = self.graph.field.size
         return Vert(vec.x // size, vec.y // size)
 
     def vert2vec(self, vert):
-        return vert.vector*self.graph.field.size
+        return vert.vector * self.graph.field.size
 
-    """ Основная функция, для поиска пути использовать её.
-        start_coord = перекрёсток, на котором гост сейчас,
-        goal_coord  = позиция пакмена"""
+    def find_closest_vert(self, point):
+        current = Vector2(point.x//self.field.size, point.y//self.field.size)
+        dirs = [Vector2(0, 1), Vector2(0, -1), Vector2(1, 0), Vector2(-1, 0)]
+        for i in range(1, max(len(self.field.matrix), len(self.field.matrix[0]))):
+            dirs = [d for d in dirs if not self.field.get_cell(d*i + current).state]
+            for d in dirs:
+                cur = d*i + current
+                if Meta.ghost_turn in self.field.get_cell_iter(int(cur.x), int(cur.y)).meta:
+                    return self.graph.get_vert_by_coord(cur.x, cur.y)
+
+
+# Основной класс, который обрабатывает поиск по карте
+class Afinder(Finder):
     def find_path(self, start_coord, goal_coord):
-
         start = self.vec2vert(start_coord)
         goal = self.vec2vert(goal_coord)
 
@@ -66,18 +80,8 @@ class Afinder:
         goto = self.vert2vec(goto)
         return goto
 
-    def find_closest_vert(self, point):
-        current = Vector2(point.x//self.field.size, point.y//self.field.size)
-        dirs = [Vector2(0, 1), Vector2(0, -1), Vector2(1, 0), Vector2(-1, 0)]
-        for i in range(1, max(len(self.field.matrix), len(self.field.matrix[0]))):
-            dirs = [d for d in dirs if not self.field.get_cell(d*i + current).state]
-            for d in dirs:
-                cur = d*i + current
-                if Meta.ghost_turn in self.field.get_cell_iter(int(cur.x), int(cur.y)).meta:
-                    return self.graph.get_vert_by_coord(cur.x, cur.y)
 
-
-class ScaryFinder(Afinder):
+class RandomFinder(Finder):
     def find_path(self, start_coord, goal_coord):
         start = self.vec2vert(start_coord)
         start = self.graph.get_vert(start)
@@ -98,7 +102,7 @@ def main():
     field = Field(None, 32, '../assets/maps/real_map.txt')
 
     finder = Afinder(field)
-    scary_finder = ScaryFinder(field)
+    scary_finder = RandomFinder(field)
     # Можно использовать несколько поисковиков
     _ = Afinder(field)
 

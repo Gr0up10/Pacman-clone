@@ -8,7 +8,7 @@ from pysmile.renderers.image_renderer import ImageRenderer
 
 from components.ghost_move import GhostMoveComponent
 from events.collect_grain import CollectBigGrainEvent
-from objects.path_finder import ScaryFinder, Afinder
+from objects.path_finder import RandomFinder, Afinder
 
 
 class ScaryModeComponent(Component):
@@ -33,7 +33,7 @@ class ScaryModeComponent(Component):
     def set_scary_mode(self, enable):
         self.scary = enable
         move_component = self.entity.get_component(GhostMoveComponent)
-        move_component.set_path_finder(ScaryFinder if self.scary else Afinder)
+        move_component.set_path_finder(RandomFinder if self.scary else Afinder)
         move_component.update_target()
         self.entity.get_component(RendererComponent).renderer = \
             ImageRenderer(self.scary_image_path) if self.scary else self.previous_renderer
