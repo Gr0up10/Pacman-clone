@@ -21,6 +21,7 @@ from components.move_component import MoveComponent
 from components.music_player import MusicPlayerComponent
 from components.object_update import ObjectUpdate
 from components.ghost_move import GhostMoveComponent
+from components.scary_mode import ScaryModeComponent
 from components.score_increaser import ScoreIncreaserComponent
 from components.pacman_collisions import PacmanCollisions
 from events.debug_line import DrawDebugLineEvent
@@ -94,6 +95,7 @@ class MainScene(Scene):
         self.pinky.add_component(BoxCollider((32, 32)))
         self.pinky.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/pink.png"), (32, 32)))
         self.pinky.add_component(GhostMoveComponent(self.field_obj, 2, self.pinky_find_target, player, Colors.pink))
+        self.pinky.add_component(ScaryModeComponent())
 
         red = Entity()
         self.add_entity(red)
@@ -101,6 +103,7 @@ class MainScene(Scene):
         red.add_component(BoxCollider((32, 32)))
         red.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/red.png"), (32, 32)))
         red.add_component(GhostMoveComponent(self.field_obj, 2, self.red_find_target, player, Colors.red))
+        red.add_component(ScaryModeComponent())
 
         inky = Entity()
         self.add_entity(inky)
@@ -108,6 +111,7 @@ class MainScene(Scene):
         inky.add_component(BoxCollider((32, 32)))
         inky.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/blue.png"), (32, 32)))
         inky.add_component(GhostMoveComponent(self.field_obj, 2, self.inky_find_target, player, Colors.purple))
+        inky.add_component(ScaryModeComponent())
 
         debug_line = Entity()
         self.add_entity(debug_line)

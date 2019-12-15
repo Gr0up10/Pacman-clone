@@ -77,29 +77,19 @@ class Afinder:
                     return self.graph.get_vert_by_coord(cur.x, cur.y)
 
 
-
 class ScaryFinder(Afinder):
-    def find_path(self, start_coord):
-
+    def find_path(self, start_coord, goal_coord):
         start = self.vec2vert(start_coord)
         start = self.graph.get_vert(start)
-        start = self.graph.get_vert(Vert(1,1))
         if not start:
             return self.vert2vec(self.find_closest_vert(start_coord))
 
-        goto = start
-
-        rand = random.randint(0, len(start.neighbours)-1)
+        neighbours = [n for n in start.neighbours if n[0] != self.last_pos or len(start.neighbours) == 1]
+        rand = random.randint(0, len(neighbours) - 1)
         path = start.neighbours[rand][0]
-        while path == self.last_pos:
-            rand = random.randint(0, len(start.neighbours) - 1)
-            path = start.neighbours[rand][0]
-
-        goto = path
+        goto = self.vert2vec(path)
         self.last_pos = start
-        goto = self.vert2vec(goto)
         return goto
-
 
 
 # Пример использования

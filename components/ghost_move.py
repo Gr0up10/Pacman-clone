@@ -29,6 +29,9 @@ class GhostMoveComponent(Component):
             self.debug_line_color = color.to_float()
         self.pacman = pacman
 
+    def set_path_finder(self, finder_type):
+        self.path_finder = finder_type(self.field)
+
     def update(self, _):
         trans = self.entity.get_component(TransformComponent)
         if not trans:
