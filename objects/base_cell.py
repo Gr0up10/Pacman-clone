@@ -40,7 +40,7 @@ class Wall(Cell):
         pygame.draw.rect(self.game.screen, (255, 0, 0), self.rect, 0)
 
 
-class GhostDoor(Wall):
+class GhostDoor(Cell):
     def process_draw(self):
         pygame.draw.rect(self.game.screen, (0, 0, 255), pygame.Rect(self.rect.x-self.size*0.2, self.rect.y,
                                                                     self.rect.w+self.size*0.2, self.rect.h), 0)

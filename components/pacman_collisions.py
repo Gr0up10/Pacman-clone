@@ -1,7 +1,7 @@
 from pysmile.component import Component
 from pysmile.components.transform import TransformComponent
 from pysmile.components.collisions.collider import Collider
-from objects.base_cell import Wall
+from objects.base_cell import Wall, GhostDoor
 
 
 class PacmanCollisions(Component):
@@ -19,7 +19,7 @@ class PacmanCollisions(Component):
         collider = col.get_collider()[0].move(direction)
         cells = self.field.get_cells_around(trans.position + direction)
         for cell in cells:
-            if isinstance(cell, Wall) and cell.rect.colliderect(collider):
+            if (isinstance(cell, Wall) or isinstance(cell, GhostDoor)) and cell.rect.colliderect(collider):
                 return False
         return True
 
