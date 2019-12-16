@@ -2,6 +2,7 @@ import random
 
 from pysmile.colors import Colors
 from pysmile.component import Component
+from pysmile.components.collisions.collider import Collider
 from pysmile.components.transform import TransformComponent
 from pysmile.events.update import UpdateEvent
 from pysmile.math.vector2 import Vector2
@@ -9,7 +10,7 @@ from pysmile.math.vector2 import Vector2
 from components.move_component import MoveComponent
 from events.change_tile import PacmanChangeTileEvent
 from events.debug_line import DrawDebugLineEvent
-from objects.base_cell import Meta
+from objects.base_cell import Meta, Wall
 from objects.path_finder import Afinder
 
 
@@ -37,12 +38,22 @@ class GhostMoveComponent(Component):
         if not trans:
             return
         if self.target and self.direction:
-            if self.target == trans.pos:
-                self.update_target()
-            if not self.field.get_cell(trans.pos + self.direction * self.speed).state:
+            incr = self.direction * self.speed
+            for i in range(self.speed):
+                inc = self.direction * i
+                if self.target == trans.pos + inc:
+                    self.update_target()
+                    incr = inc
+            check_pos = Vector2(*trans.pos)
+            coll = self.entity.get_component(Collider).get_collider()[0]
+            if self.direction.x > 0:
+                check_pos += Vector2(coll.w, 0)
+            if self.direction.y > 0:
+                check_pos += Vector2(0, coll.h)
+            if isinstance(self.field.get_cell(check_pos), Wall):
                 self.update_target()
                 return
-            trans.position += self.direction * self.speed
+            trans.position += incr
         else:
             self.update_target()
 
