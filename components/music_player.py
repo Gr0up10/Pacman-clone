@@ -35,8 +35,6 @@ class MusicPlayerComponent(Component):
         if self.pause_after:
             self.pause_song = event.sound
 
-        print(pygame.mixer_music.get_busy())
-
     def update(self, _):
         if self.pause_after and self.pause_after != 0:
             self.pause_after -= 1

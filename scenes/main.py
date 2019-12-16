@@ -169,7 +169,7 @@ class MainScene(Scene):
         player.add_component(BoxCollider((32, 32)))
         player.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts, animation_speed=0.3), (32, 32)))
         player.add_component(GrainCollisions())
-        player.add_component(GhostCollision([red, self.pinky, inky]))
+        #player.add_component(GhostCollision([red, self.pinky, inky]))
 
     @staticmethod
     def red_find_target(pacman, field, pos):

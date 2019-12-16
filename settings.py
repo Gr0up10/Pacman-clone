@@ -6,7 +6,7 @@ class Settings:
     def load(self):
         settings = open("data/settings.txt", "r")
         for line in settings.readlines():
-            name, value = line.split(" ")
+            name, value = line.replace("\n", "").split(" ")
             if value == "True":
                 value = True
             elif value == "False":

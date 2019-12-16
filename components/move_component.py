@@ -7,6 +7,7 @@ from pysmile.renderers.tile_renderer import TileRenderer
 
 from components.pacman_collisions import PacmanCollisions
 from events.change_tile import PacmanChangeTileEvent
+from objects.base_cell import Meta, Floor
 
 
 class MoveComponent(Component):
@@ -48,8 +49,28 @@ class MoveComponent(Component):
         tile_size = collsion.field.size
         new_tile = Vector2(trans.x//tile_size, trans.y//tile_size)
         if self.previous_tile is None or self.previous_tile != new_tile:
+            if not self.teleport(collsion.field, trans, Meta.teleport1, Meta.teleport2):
+                self.teleport(collsion.field, trans, Meta.teleport2, Meta.teleport1)
             self.previous_tile = new_tile
+
             self.entity.event_manager.trigger_event(PacmanChangeTileEvent(self.entity))
+
+    def teleport(self, field, trans, meta1, meta2):
+        if not self.previous_tile:
+            return
+        prev_meta = field.get_cell_iter(int(self.previous_tile.x), int(self.previous_tile.y)).meta
+        if meta1 in field.get_cell(trans.pos).meta and meta2 not in prev_meta:
+            print(field.get_cell_iter(int(self.previous_tile.x), int(self.previous_tile.y)))
+            print(field.get_cell(self.previous_tile*field.size).meta)
+            print(prev_meta)
+            print(self.previous_tile)
+            print(meta1, meta2)
+            trans.position = Vector2(*field.get_cells_by_type(Floor, meta2)[0].rect.xy)
+
+            self.new_direction = self.direction
+            print(self.direction)
+            return True
+        return False
 
     def removed(self):
         self.entity.event_manager.bind(UpdateEvent, self.update)
