@@ -13,6 +13,8 @@ class LineHandlerComponent(Component):
         self.lines = 0
 
     def draw_line(self, event):
+        if not self.entity.scene.game.settings.debug:
+            return
         line_rend = self.entity.get_component(RendererComponent).renderer
         lines = line_rend.lines
         for i in range(len(lines)):

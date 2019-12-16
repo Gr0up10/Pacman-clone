@@ -11,7 +11,7 @@ class Settings:
                 value = True
             elif value == "False":
                 value = False
-            self.__setattr__(name, value)
+            self.settings[name] = value
 
     def __getattr__(self, item):
         if item == "settings":
@@ -22,5 +22,6 @@ class Settings:
         if key == "settings":
             return object.__setattr__(self, key, value)
         self.settings[key] = value
+        print(self.settings)
         settings = open("data/settings.txt", "w")
         settings.write("\n".join(["{} {}".format(n, str(v)) for n, v in self.settings.items()]))
