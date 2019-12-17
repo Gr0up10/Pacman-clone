@@ -113,6 +113,14 @@ class MainScene(Scene):
         inky.add_component(GhostMoveComponent(self.field_obj, 2, self.inky_find_target, player, Colors.purple))
         inky.add_component(ScaryModeComponent())
 
+        clyde = Entity()
+        self.add_entity(clyde)
+        clyde.add_component(TransformComponent(Vector2(*ghost_pos[3].rect.xy)))
+        clyde.add_component(BoxCollider((32, 32)))
+        clyde.add_component(RendererComponent(ImageRenderer("assets/images/ghosts/orange.png"), (32, 32)))
+        clyde.add_component(GhostMoveComponent(self.field_obj, 2, self.clyde_find_target, player, Colors.orange))
+        clyde.add_component(ScaryModeComponent())
+
         debug_line = Entity()
         self.add_entity(debug_line)
         debug_line.add_component(TransformComponent(Vector2(0, 0)))
@@ -169,11 +177,18 @@ class MainScene(Scene):
         player.add_component(BoxCollider((32, 32)))
         player.add_component(RendererComponent(TileRenderer(ts.tiles["pacman"], ts, animation_speed=0.3), (32, 32)))
         player.add_component(GrainCollisions())
-        player.add_component(GhostCollision([red, self.pinky, inky]))
+        player.add_component(GhostCollision([red, self.pinky, inky, clyde]))
 
     @staticmethod
     def red_find_target(pacman, field, pos):
         return pacman.get_component(TransformComponent).pos
+
+    @staticmethod
+    def clyde_find_target(pacman, field, pos):
+        pac_pos = pacman.get_component(TransformComponent).pos
+        if pac_pos.distance_to(pos) > field.size*8:
+            return pac_pos
+        return Vector2(0, len(field.matrix)*field.size)
 
     @staticmethod
     def vec2tuple(vec):
