@@ -58,7 +58,7 @@ class Finder:
 
 
 # Основной класс, который обрабатывает поиск по карте
-class Afinder(Finder):
+class AFinder(Finder):
     def find_path(self, start_coord, goal_coord):
         start = self.vec2vert(start_coord)
         goal = self.vec2vert(goal_coord)
@@ -101,10 +101,10 @@ def main():
     # Инициализируем поисковик
     field = Field(None, 32, '../assets/maps/real_map.txt')
 
-    finder = Afinder(field)
+    finder = AFinder(field)
     scary_finder = RandomFinder(field)
     # Можно использовать несколько поисковиков
-    _ = Afinder(field)
+    _ = AFinder(field)
 
     # Точки
     start = Vector2()

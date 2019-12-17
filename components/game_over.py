@@ -31,7 +31,6 @@ class GameOverComponent(Component):
         self.grains_count += 1
         if self.grains_count >= self.max_grains_count:
             self.game_over()
-            #
 
     def go_to_menu(self):
         self.entity.current_scene = MenuScene

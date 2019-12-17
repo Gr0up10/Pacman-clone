@@ -60,15 +60,8 @@ class MoveComponent(Component):
             return
         prev_meta = field.get_cell_iter(int(self.previous_tile.x), int(self.previous_tile.y)).meta
         if meta1 in field.get_cell(trans.pos).meta and meta2 not in prev_meta:
-            print(field.get_cell_iter(int(self.previous_tile.x), int(self.previous_tile.y)))
-            print(field.get_cell(self.previous_tile*field.size).meta)
-            print(prev_meta)
-            print(self.previous_tile)
-            print(meta1, meta2)
             trans.position = Vector2(*field.get_cells_by_type(Floor, meta2)[0].rect.xy)
-
             self.new_direction = self.direction
-            print(self.direction)
             return True
         return False
 

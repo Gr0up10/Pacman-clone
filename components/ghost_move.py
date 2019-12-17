@@ -11,7 +11,7 @@ from components.move_component import MoveComponent
 from events.change_tile import PacmanChangeTileEvent
 from events.debug_line import DrawDebugLineEvent
 from objects.base_cell import Meta, Wall
-from objects.path_finder import Afinder
+from objects.path_finder import AFinder
 
 
 class GhostMoveComponent(Component):
@@ -21,7 +21,7 @@ class GhostMoveComponent(Component):
         self.speed = speed
         self.entity = None
         self.direction = None
-        self.path_finder = Afinder(field)
+        self.path_finder = AFinder(field)
         self.target = None
         self.find_target = find_target
         if not color:
